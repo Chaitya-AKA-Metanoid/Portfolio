@@ -124,7 +124,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
 
     // Scene
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x121212, 0.008);
+    scene.fog = new THREE.FogExp2(0x121212, 0.007); // Slightly reduced fog density
     sceneRef.current = scene;
 
     // Camera
@@ -198,11 +198,20 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     const handleResize = () => {
       if (rendererRef.current && cameraRef.current && mountRef.current) {
         cameraRef.current.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
+        
+        // Adjust FoV for wider screens to prevent feeling too empty
+        if (cameraRef.current.aspect > 1.8) {
+             cameraRef.current.fov = 70;
+        } else {
+             cameraRef.current.fov = 75;
+        }
+        
         cameraRef.current.updateProjectionMatrix();
         rendererRef.current.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
       }
     };
     window.addEventListener('resize', handleResize);
+    handleResize(); // Call once initially
 
     // Animation loop
     const clock = new THREE.Clock();
