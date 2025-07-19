@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { updateCityLighting, UpdateCityLightingOutput } from '@/ai/flows/update-city-lighting';
 import { CityscapeCanvas } from '@/components/cityscape-canvas';
 import { Loader } from '@/components/loader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -47,7 +46,6 @@ const loadingMessages = [
 export default function SkyscraperStory() {
   const [loading, setLoading] = useState(true);
   const [loadingText, setLoadingText] = useState(loadingMessages[0]);
-  const [weatherData, setWeatherData] = useState<UpdateCityLightingOutput | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeProjectIndex, setActiveProjectIndex] = useState(-1);
   const [journeyFinished, setJourneyFinished] = useState(false);
@@ -66,24 +64,16 @@ export default function SkyscraperStory() {
         }
     }, 1500);
 
-    const weatherPromise = updateCityLighting({})
-      .then(setWeatherData)
-      .catch(() => {
-        toast({
-          title: "Weather API Error",
-          description: "Could not fetch dynamic weather. Using default lighting.",
-          variant: "destructive",
-        });
-      });
-
-    Promise.all([weatherPromise, new Promise(resolve => setTimeout(resolve, loadingMessages.length * 1500))])
-      .finally(() => {
-        clearInterval(interval);
-        setTimeout(() => setLoading(false), 500); // Short delay for smooth transition
-      });
+    const timer = setTimeout(() => {
+      clearInterval(interval);
+      setLoading(false);
+    }, loadingMessages.length * 1500);
       
-    return () => clearInterval(interval);
-  }, [toast]);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timer);
+    }
+  }, []);
 
 
   const handleScroll = useCallback(() => {
@@ -134,9 +124,8 @@ export default function SkyscraperStory() {
       cameraPath={cameraPath}
       projects={projects}
       journeyFinished={journeyFinished}
-      weatherData={weatherData}
     />
-  ), [scrollProgress, activeProjectIndex, journeyFinished, weatherData]);
+  ), [scrollProgress, activeProjectIndex, journeyFinished]);
 
   return (
     <>

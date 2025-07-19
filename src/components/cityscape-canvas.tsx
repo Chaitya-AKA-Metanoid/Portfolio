@@ -3,7 +3,6 @@
 
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import type { UpdateCityLightingOutput } from '@/ai/flows/update-city-lighting';
 
 interface CityscapeCanvasProps {
   scrollProgress: number;
@@ -11,7 +10,6 @@ interface CityscapeCanvasProps {
   cameraPath: { position: [number, number, number]; target: [number, number, number] }[];
   projects: { position: [number, number, number] }[];
   journeyFinished: boolean;
-  weatherData: UpdateCityLightingOutput | null;
 }
 
 const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBuilding: boolean) => {
@@ -106,7 +104,7 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
   }
 };
 
-export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath, projects, journeyFinished, weatherData }: CityscapeCanvasProps) {
+export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath, projects, journeyFinished }: CityscapeCanvasProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -114,10 +112,10 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
   const projectBuildingGroupsRef = useRef<THREE.Group[]>([]);
 
   // Use refs for props to access latest values in animation loop
-  const propsRef = useRef({ scrollProgress, activeProjectIndex, journeyFinished, weatherData });
+  const propsRef = useRef({ scrollProgress, activeProjectIndex, journeyFinished });
   useEffect(() => {
-    propsRef.current = { scrollProgress, activeProjectIndex, journeyFinished, weatherData };
-  }, [scrollProgress, activeProjectIndex, journeyFinished, weatherData]);
+    propsRef.current = { scrollProgress, activeProjectIndex, journeyFinished };
+  }, [scrollProgress, activeProjectIndex, journeyFinished]);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -204,7 +202,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
       requestAnimationFrame(animate);
       if (!rendererRef.current || !sceneRef.current || !cameraRef.current) return;
       
-      const { scrollProgress, activeProjectIndex, journeyFinished, weatherData } = propsRef.current;
+      const { scrollProgress, activeProjectIndex, journeyFinished } = propsRef.current;
       const elapsedTime = clock.getElapsedTime();
 
       // Update camera
@@ -243,19 +241,6 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
             buildingGroup.userData.rings[1].rotation.z = -elapsedTime * 0.1;
         }
       });
-
-      // Update weather
-      if (weatherData?.updatedLightingConfig) {
-        try {
-          const config = JSON.parse(weatherData.updatedLightingConfig);
-          ambientLight.color.set(config.ambientColor || 0x404040);
-          ambientLight.intensity = config.ambientIntensity || 2;
-          directionalLight.color.set(config.directionalColor || 0xffffff);
-          directionalLight.intensity = config.directionalIntensity || 1;
-        } catch (e) {
-          // console.error("Failed to parse lighting config");
-        }
-      }
 
       rendererRef.current.render(sceneRef.current, cameraRef.current);
     };
