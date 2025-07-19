@@ -19,29 +19,39 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
 
   if (isProjectBuilding) {
     const meshes: THREE.Mesh[] = [];
-
-    // Main Structure
-    const mainMaterial = new THREE.MeshStandardMaterial({
-      color: 0x2a2a3a,
-      roughness: 0.6,
-      metalness: 0.3,
+    const material = new THREE.MeshStandardMaterial({
+        color: 0x2a2a3a,
+        roughness: 0.6,
+        metalness: 0.3,
     });
-    const mainGeom = new THREE.BoxGeometry(14, 60, 14);
-    const mainBuilding = new THREE.Mesh(mainGeom, mainMaterial);
+    const geom = new THREE.BoxGeometry(14, 60, 14);
+    const mainBuilding = new THREE.Mesh(geom, material);
     mainBuilding.position.y = 30;
     buildingGroup.add(mainBuilding);
 
-    // Glowing Core
-    const coreMaterial = new THREE.MeshStandardMaterial({
-      color: 0xBF00FF,
-      emissive: 0xBF00FF,
-      emissiveIntensity: 0,
+    const ringMaterial = new THREE.MeshStandardMaterial({
+        color: 0xBF00FF,
+        emissive: 0xBF00FF,
+        emissiveIntensity: 0,
     });
-    const coreGeom = new THREE.CylinderGeometry(2, 2, 65, 16);
-    const core = new THREE.Mesh(coreGeom, coreMaterial);
-    core.position.y = 32.5;
-    buildingGroup.add(core);
-    meshes.push(core); // This will be the part that glows
+    
+    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(10, 0.15, 8, 32), ringMaterial);
+    ring1.rotation.x = Math.PI / 2;
+    ring1.position.y = 15;
+    buildingGroup.add(ring1);
+    
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(10, 0.15, 8, 32), ringMaterial);
+    ring2.rotation.x = Math.PI / 2;
+    ring2.position.y = 30;
+    buildingGroup.add(ring2);
+
+    const ring3 = new THREE.Mesh(new THREE.TorusGeometry(10, 0.15, 8, 32), ringMaterial);
+    ring3.rotation.x = Math.PI / 2;
+    ring3.position.y = 45;
+    buildingGroup.add(ring3);
+
+    buildingGroup.userData.rings = [ring1, ring2, ring3];
+    meshes.push(ring1, ring2, ring3);
 
     return meshes;
 
@@ -53,9 +63,9 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
       metalness: 0.2,
     });
 
-    const bodyHeight = Math.random() * 40 + 20;
-    const bodyWidth = Math.random() * 6 + 4;
-    const bodyDepth = Math.random() * 6 + 4;
+    const bodyHeight = Math.random() * 80 + 20; // Taller buildings
+    const bodyWidth = Math.random() * 8 + 6;
+    const bodyDepth = Math.random() * 8 + 6;
 
     const bodyGeom = new THREE.BoxGeometry(bodyWidth, bodyHeight, bodyDepth);
     const body = new THREE.Mesh(bodyGeom, material);
@@ -67,7 +77,7 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
     const windowMat = new THREE.MeshStandardMaterial({
       color: 0x222233,
       emissive: 0xffff00,
-      emissiveIntensity: Math.random() > 0.15 ? 1 : 0, // Increased probability for more yellow lights
+      emissiveIntensity: Math.random() > 0.1 ? 1 : 0, // More yellow lights
     });
 
     for (let y = 5; y < bodyHeight - 5; y += 4) {
@@ -115,11 +125,11 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
 
     // Scene
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x121212, 0.007);
+    scene.fog = new THREE.FogExp2(0x121212, 0.0035); // Adjusted fog density
     sceneRef.current = scene;
 
     // Camera
-    const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 2000); // Increased far plane
     camera.position.set(...cameraPath[0].position);
     cameraRef.current = camera;
 
@@ -131,17 +141,17 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     rendererRef.current = renderer;
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0x4B0082, 1.2);
+    const ambientLight = new THREE.AmbientLight(0x4B0082, 1.5);
     scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
     directionalLight.position.set(50, 50, 25);
     scene.add(directionalLight);
 
-    const pointLight1 = new THREE.PointLight(0xBF00FF, 15, 300, 2); // More intense purple
+    const pointLight1 = new THREE.PointLight(0xBF00FF, 30, 400, 2); // More intense purple
     pointLight1.position.set(-50, 20, -40);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0xFFD700, 10, 300, 2); // Changed to yellow
+    const pointLight2 = new THREE.PointLight(0xFFD700, 20, 400, 2); // Brighter yellow
     pointLight2.position.set(60, 25, 30);
     scene.add(pointLight2);
     
@@ -160,9 +170,10 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     });
 
     // Create background buildings
+    const citySize = 800; // Increased city size
     for (let i = 0; i < 500; i++) {
-        const x = (Math.random() - 0.5) * 400;
-        const z = (Math.random() - 0.5) * 400;
+        const x = (Math.random() - 0.5) * citySize;
+        const z = (Math.random() - 0.5) * citySize;
 
         // Avoid placing them too close to project buildings
         const isTooClose = projects.some(p => {
@@ -179,7 +190,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     scene.add(cityGroup);
 
     // Ground
-    const groundGeometry = new THREE.PlaneGeometry(400, 400);
+    const groundGeometry = new THREE.PlaneGeometry(citySize, citySize);
     const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x080808, roughness: 0.9 });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
@@ -192,7 +203,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
         
         // Adjust FoV for wider screens to prevent feeling too empty
         if (cameraRef.current.aspect > 1.8) {
-             cameraRef.current.fov = 70;
+             cameraRef.current.fov = 80; // Wider FOV for wide screens
         } else {
              cameraRef.current.fov = 75;
         }
@@ -237,6 +248,12 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
 
       // Update building animations
       projectBuildingGroupsRef.current.forEach((buildingGroup, index) => {
+        if(buildingGroup.userData.rings) {
+            buildingGroup.userData.rings[0].rotation.z = elapsedTime * 0.5;
+            buildingGroup.userData.rings[1].rotation.z = -elapsedTime * 0.3;
+            buildingGroup.userData.rings[2].rotation.z = elapsedTime * 0.2;
+        }
+
         let shouldGlow = false;
         if (journeyFinished) {
           shouldGlow = true;
@@ -271,3 +288,5 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
 
   return <div ref={mountRef} className="fixed top-0 left-0 w-full h-full -z-10" />;
 }
+
+    
