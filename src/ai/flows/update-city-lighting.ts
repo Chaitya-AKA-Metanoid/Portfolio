@@ -11,6 +11,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getMumbaiWeather } from '@/services/weather';
 
 const WeatherSchema = z.object({
   temperature: z.number().describe('The current temperature in Celsius.'),
@@ -39,12 +40,26 @@ const getCurrentWeatherTool = ai.defineTool(
     outputSchema: WeatherSchema,
   },
   async () => {
-    // In a real application, this would call an external weather API.
-    // For now, return hardcoded example data.
+    const weather = await getMumbaiWeather();
+    // This part is a bit of a creative leap by the AI. It will generate a lighting description.
+    // A real app might have predefined conditions or use a more complex logic.
+    const timeOfDay = new Date().getHours();
+    let lightingDescription = `The weather is currently ${weather.condition.toLowerCase()}.`;
+
+    if (timeOfDay >= 6 && timeOfDay < 10) {
+        lightingDescription += " It's early morning, and the sun is rising, casting a soft, cool light across the city.";
+    } else if (timeOfDay >= 10 && timeOfDay < 16) {
+        lightingDescription += " It's midday, with bright, direct overhead lighting.";
+    } else if (timeOfDay >= 16 && timeOfDay < 19) {
+        lightingDescription += " The sun is setting, creating a warm, golden glow with long shadows.";
+    } else {
+        lightingDescription += " It's nighttime. The city is illuminated by streetlights and building windows, under a dark sky.";
+    }
+    
     return {
-      temperature: 30,
-      condition: 'Clear skies',
-      lightingDescription: 'The sun is setting, casting a warm golden glow over the city. The sky is a gradient of orange and pink.',
+      temperature: weather.temperature,
+      condition: weather.condition,
+      lightingDescription: lightingDescription,
     };
   }
 );
@@ -61,6 +76,11 @@ const prompt = ai.definePrompt({
   First, use the getCurrentWeather tool to obtain the current weather conditions in Mumbai.
 
   Based on the weather conditions, generate a detailed description of the lighting and an appropriate JSON lighting configuration.
+  For the JSON config, provide 'ambientColor', 'ambientIntensity', 'directionalColor', and 'directionalIntensity'.
+  - If it's daytime and clear, use bright white/yellowish colors.
+  - If it's cloudy, use softer, whiter, more diffused light (lower directional intensity).
+  - If it's raining, make it darker and cooler (bluish tints).
+  - If it's nighttime, use dark ambient light (like a deep blue) and a faint directional light to simulate moonlight.
 
   This JSON configuration will be used to update the Three.js scene.
 
