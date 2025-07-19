@@ -146,7 +146,7 @@ export default function SkyscraperStory() {
     }[alignment];
     return (
         <section className={`h-screen flex flex-col snap-start container mx-auto px-4 ${alignmentClass}`}>
-            <div className="w-full max-w-md pt-20 pb-20 flex flex-col justify-center">
+            <div className="w-full max-w-lg pt-20 pb-20 flex flex-col justify-center">
                 {children}
             </div>
         </section>
