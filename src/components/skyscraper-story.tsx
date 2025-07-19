@@ -212,7 +212,7 @@ export default function SkyscraperStory() {
                     </div>
                     <p className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">LinkedIn</p>
                  </a>
-                 <a href="/ChaityaShah_resume_.pdf" download="ChaityaShah_resume_.pdf" className="group">
+                 <a href="/ChaityaShah_resume_.pdf" target="_blank" rel="noopener noreferrer" className="group">
                     <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
                         <FileText className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
