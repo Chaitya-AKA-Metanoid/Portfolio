@@ -15,13 +15,13 @@ const projects = [
   {
     title: 'DeFi Innovation',
     description: 'A cutting-edge platform for decentralized finance, leveraging blockchain technology for secure and transparent transactions.',
-    links: { github: '#' },
+    links: { github: 'https://github.com/Chaitya-shah8' },
     position: [-40, 0, -50],
   },
   {
     title: 'Enviro-Monitor',
     description: 'A cross-platform mobile application for community-driven environmental monitoring.',
-    links: { github: '#' },
+    links: { github: 'https://github.com/Chaitya-shah8' },
     position: [0, 0, 15],
   },
 ];
@@ -206,19 +206,19 @@ export default function SkyscraperStory() {
               <h2 className="text-4xl font-headline mb-4">Let's Connect</h2>
               <p className="text-muted-foreground mb-8">The journey's end is a new beginning.</p>
               <div className="flex justify-center space-x-8">
-                 <a href="#" className="group">
+                 <a href="https://www.linkedin.com/in/chaitya-shah26" target="_blank" rel="noopener noreferrer" className="group">
                     <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
                        <Linkedin className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
                     <p className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">LinkedIn</p>
                  </a>
-                 <a href="#" className="group">
+                 <a href="https://github.com/Chaitya-shah8" target="_blank" rel="noopener noreferrer" className="group">
                     <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
                         <Github className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
                     <p className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">GitHub</p>
                  </a>
-                 <a href="#" className="group">
+                 <a href="mailto:shahchaitya8@gmail.com" className="group">
                     <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
                         <Mail className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
