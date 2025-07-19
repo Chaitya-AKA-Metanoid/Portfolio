@@ -127,6 +127,21 @@ export default function SkyscraperStory() {
     />
   ), [scrollProgress, activeProjectIndex, journeyFinished]);
 
+  const ContentWrapper = ({ children, alignment = 'center' }: { children: React.ReactNode, alignment?: 'start' | 'end' | 'center' }) => {
+    const alignmentClass = {
+        start: 'items-center lg:items-start',
+        end: 'items-center lg:items-end',
+        center: 'items-center justify-center'
+    }[alignment];
+    return (
+        <section className={`h-screen flex flex-col snap-start container mx-auto px-4 ${alignmentClass}`}>
+            <div className="w-full max-w-md">
+                {children}
+            </div>
+        </section>
+    );
+  };
+
   return (
     <>
       {loading && <Loader text={loadingText} />}
@@ -134,7 +149,7 @@ export default function SkyscraperStory() {
         {memoizedCanvas}
         
         <div className="relative z-10 w-full">
-          <section className="h-screen flex items-center justify-center flex-col text-center snap-start">
+           <section className="h-screen flex items-center justify-center flex-col text-center snap-start">
              <div
               className={cn(
                 "transition-opacity duration-1000",
@@ -150,13 +165,12 @@ export default function SkyscraperStory() {
              </div>
           </section>
 
-          <section className="h-screen flex items-center justify-end snap-start">
-            <div className="container mx-auto px-4 flex justify-end">
+          <ContentWrapper alignment="end">
               <div className={cn(
-                "w-full max-w-md p-6 rounded-lg border-2 bg-black/30 backdrop-blur-sm transition-all duration-500",
+                "p-6 rounded-lg bg-black/40 backdrop-blur-md transition-all duration-500 border border-transparent",
                 showWhoAmI
-                  ? 'opacity-100 translate-y-0 border-accent/50 shadow-[0_0_30px_-5px_hsl(var(--accent))]' 
-                  : 'opacity-0 translate-y-5 border-transparent'
+                  ? 'opacity-100 translate-y-0 border-accent/30 shadow-[0_0_40px_-10px_hsl(var(--accent))]' 
+                  : 'opacity-0 translate-y-5'
               )}>
                 <h2 className="font-headline text-3xl font-bold text-accent mb-2">Who Am I?</h2>
                 <div className="text-muted-foreground mb-6 space-y-4">
@@ -168,17 +182,16 @@ export default function SkyscraperStory() {
                     </p>
                 </div>
               </div>
-            </div>
-          </section>
+          </ContentWrapper>
+
 
           {projects.map((project, index) => (
-             <section key={index} className="h-screen flex items-center justify-start snap-start">
-               <div className="container mx-auto px-4">
+             <ContentWrapper key={index} alignment="start">
                   <div className={cn(
-                    "w-full max-w-md p-6 rounded-lg border-2 bg-black/30 backdrop-blur-sm transition-all duration-500",
+                    "p-6 rounded-lg bg-black/40 backdrop-blur-md transition-all duration-500 border border-transparent",
                     activeProjectIndex === index 
-                      ? 'opacity-100 translate-y-0 border-accent/50 shadow-[0_0_30px_-5px_hsl(var(--accent))]' 
-                      : 'opacity-0 translate-y-5 border-transparent'
+                      ? 'opacity-100 translate-y-0 border-accent/30 shadow-[0_0_40px_-10px_hsl(var(--accent))]' 
+                      : 'opacity-0 translate-y-5'
                   )}>
                     <h2 className="font-headline text-3xl font-bold text-accent mb-2">{project.title}</h2>
                     <p className="text-muted-foreground mb-6">{project.description}</p>
@@ -186,38 +199,37 @@ export default function SkyscraperStory() {
                       <Button variant="ghost" className="text-muted-foreground hover:text-accent hover:bg-accent/10" size="sm" asChild><a href={project.links.github} target="_blank" rel="noopener noreferrer"><Github /> GitHub</a></Button>
                     </div>
                   </div>
-               </div>
-             </section>
+             </ContentWrapper>
           ))}
 
           <section className="h-screen flex items-center justify-center snap-start">
             <div className="text-center">
               <h2 className="text-4xl font-headline mb-4">Let's Connect</h2>
               <p className="text-muted-foreground mb-8">The journey's end is a new beginning.</p>
-              <div className="flex justify-center space-x-8">
+              <div className="flex justify-center space-x-4 sm:space-x-8">
                  <a href="https://www.linkedin.com/in/chaitya-shah26" target="_blank" rel="noopener noreferrer" className="group">
-                    <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
-                       <Linkedin className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
+                    <div className="p-3 sm:p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
+                       <Linkedin className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
-                    <p className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">LinkedIn</p>
+                    <p className="mt-2 text-xs sm:text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">LinkedIn</p>
                  </a>
                  <a href="/ChaityaShah_resume_.pdf" target="_blank" rel="noopener noreferrer" className="group">
-                    <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
-                        <FileText className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
+                    <div className="p-3 sm:p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
+                        <FileText className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
-                    <p className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">Resume</p>
+                    <p className="mt-2 text-xs sm:text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">Resume</p>
                  </a>
                  <a href="https://github.com/Chaitya-shah8" target="_blank" rel="noopener noreferrer" className="group">
-                    <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
-                        <Github className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
+                    <div className="p-3 sm:p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
+                        <Github className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
-                    <p className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">GitHub</p>
+                    <p className="mt-2 text-xs sm:text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">GitHub</p>
                  </a>
                  <a href="mailto:shahchaitya8@gmail.com" className="group">
-                    <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
-                        <Mail className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
+                    <div className="p-3 sm:p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
+                        <Mail className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
-                    <p className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">Email</p>
+                    <p className="mt-2 text-xs sm:text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">Email</p>
                  </a>
               </div>
             </div>
