@@ -67,7 +67,7 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
     const windowMat = new THREE.MeshStandardMaterial({
       color: 0x222233,
       emissive: 0xffff00,
-      emissiveIntensity: Math.random() > 0.3 ? 1 : 0,
+      emissiveIntensity: Math.random() > 0.15 ? 1 : 0, // Increased probability for more yellow lights
     });
 
     for (let y = 5; y < bodyHeight - 5; y += 4) {
@@ -137,11 +137,11 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     directionalLight.position.set(50, 50, 25);
     scene.add(directionalLight);
 
-    const pointLight1 = new THREE.PointLight(0xBF00FF, 10, 300, 2);
+    const pointLight1 = new THREE.PointLight(0xBF00FF, 15, 300, 2); // More intense purple
     pointLight1.position.set(-50, 20, -40);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0x00BFFF, 10, 300, 2);
+    const pointLight2 = new THREE.PointLight(0xFFD700, 10, 300, 2); // Changed to yellow
     pointLight2.position.set(60, 25, 30);
     scene.add(pointLight2);
     
