@@ -178,13 +178,11 @@ export default function SkyscraperStory() {
 
           <ContentWrapper alignment="end">
               <div className={cn(
-                "p-6 rounded-lg bg-black/40 backdrop-blur-md transition-all duration-500 border border-transparent",
-                showWhoAmI
-                  ? 'opacity-100 translate-y-0 border-accent/30 shadow-[0_0_40px_-10px_hsl(var(--accent))]' 
-                  : 'opacity-0 translate-y-5'
+                "transition-all duration-500 [text-shadow:0_2px_10px_rgba(0,0,0,0.8)]",
+                showWhoAmI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
               )}>
-                <h2 className="font-headline text-3xl font-bold text-accent mb-2">Who Am I?</h2>
-                <div className="text-muted-foreground mb-6 space-y-4">
+                <h2 className="font-headline text-4xl md:text-5xl font-bold text-accent mb-4">Who Am I?</h2>
+                <div className="text-lg text-muted-foreground space-y-4">
                     <p>
                         I'm a CS grad with a builder’s mindset and a storyteller’s curiosity. I thrive on diving deep, whether it's backtesting a trading strategy, decoding business behavior, or bringing a creative project to life.
                     </p>
@@ -200,24 +198,22 @@ export default function SkyscraperStory() {
           
           <ContentWrapper alignment="start">
               <div className={cn(
-                "p-6 rounded-lg bg-black/40 backdrop-blur-md transition-all duration-500 border border-transparent",
-                showSkills
-                  ? 'opacity-100 translate-y-0 border-accent/30 shadow-[0_0_40px_-10px_hsl(var(--accent))]' 
-                  : 'opacity-0 translate-y-5'
+                "transition-all duration-500 [text-shadow:0_2px_10px_rgba(0,0,0,0.8)]",
+                showSkills ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
               )}>
-                <h2 className="font-headline text-3xl font-bold text-accent mb-4">Skills</h2>
-                <div className="space-y-4">
+                <h2 className="font-headline text-4xl md:text-5xl font-bold text-accent mb-4">Skills</h2>
+                <div className="space-y-6">
                     <div>
-                        <h3 className="font-semibold text-lg text-foreground mb-2">Languages</h3>
-                        <p className="text-muted-foreground">Python, JavaScript, TypeScript, C++, SQL, HTML/CSS</p>
+                        <h3 className="font-semibold text-2xl text-foreground mb-2">Languages</h3>
+                        <p className="text-lg text-muted-foreground">Python, JavaScript, TypeScript, C++, SQL, HTML/CSS</p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-lg text-foreground mb-2">Frameworks & Libraries</h3>
-                        <p className="text-muted-foreground">React, Next.js, Node.js, TensorFlow, PyTorch, Pandas, Scikit-learn, Three.js</p>
+                        <h3 className="font-semibold text-2xl text-foreground mb-2">Frameworks & Libraries</h3>
+                        <p className="text-lg text-muted-foreground">React, Next.js, Node.js, TensorFlow, PyTorch, Pandas, Scikit-learn, Three.js</p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-lg text-foreground mb-2">Databases</h3>
-                        <p className="text-muted-foreground">MySQL, PostgreSQL, MongoDB, Firebase</p>
+                        <h3 className="font-semibold text-2xl text-foreground mb-2">Databases</h3>
+                        <p className="text-lg text-muted-foreground">MySQL, PostgreSQL, MongoDB, Firebase</p>
                     </div>
                 </div>
               </div>
@@ -227,13 +223,11 @@ export default function SkyscraperStory() {
           {projects.map((project, index) => (
              <ContentWrapper key={index} alignment={index % 2 === 0 ? "start" : "end"}>
                   <div className={cn(
-                    "p-6 rounded-lg bg-black/40 backdrop-blur-md transition-all duration-500 border border-transparent",
-                    activeProjectIndex === index 
-                      ? 'opacity-100 translate-y-0 border-accent/30 shadow-[0_0_40px_-10px_hsl(var(--accent))]' 
-                      : 'opacity-0 translate-y-5'
+                    "transition-all duration-500 [text-shadow:0_2px_10px_rgba(0,0,0,0.8)]",
+                    activeProjectIndex === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
                   )}>
-                    <h2 className="font-headline text-3xl font-bold text-accent mb-2">{project.title}</h2>
-                    <p className="text-muted-foreground mb-6">{project.description}</p>
+                    <h2 className="font-headline text-4xl md:text-5xl font-bold text-accent mb-2">{project.title}</h2>
+                    <p className="text-lg text-muted-foreground mb-6">{project.description}</p>
                     <div className="flex space-x-4">
                       <Button variant="ghost" className="text-muted-foreground hover:text-accent hover:bg-accent/10" size="sm" asChild><a href={project.links.github} target="_blank" rel="noopener noreferrer"><Github /> GitHub</a></Button>
                     </div>

@@ -43,26 +43,6 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
     buildingGroup.add(core);
     meshes.push(core); // This will be the part that glows
 
-    // Holographic Rings
-    const ringGeom = new THREE.TorusGeometry(8, 0.2, 8, 32);
-    const ringMat = new THREE.MeshBasicMaterial({
-        color: 0xBF00FF,
-        transparent: true,
-        opacity: 0.5,
-        side: THREE.DoubleSide
-    });
-    const ring1 = new THREE.Mesh(ringGeom, ringMat);
-    ring1.position.y = 20;
-    ring1.rotation.x = Math.PI / 2;
-    buildingGroup.add(ring1);
-    
-    const ring2 = ring1.clone();
-    ring2.position.y = 40;
-    ring2.scale.set(0.8, 0.8, 0.8);
-    buildingGroup.add(ring2);
-
-    buildingGroup.userData.rings = [ring1, ring2];
-
     return meshes;
 
   } else {
@@ -251,11 +231,6 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
                 const material = mesh.material as THREE.MeshStandardMaterial;
                 material.emissiveIntensity = THREE.MathUtils.lerp(material.emissiveIntensity, emissiveIntensity, 0.1);
             });
-        }
-        
-        if(buildingGroup.userData.rings) {
-            buildingGroup.userData.rings[0].rotation.z = elapsedTime * 0.2;
-            buildingGroup.userData.rings[1].rotation.z = -elapsedTime * 0.1;
         }
       });
 
