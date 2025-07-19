@@ -100,20 +100,22 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
         base.position.y = height / 2;
         buildingGroup.add(base);
 
-        // Add a glowing ring sometimes
-        if (Math.random() > 0.4) {
-            const ringRadius = radius + 0.5;
-            const ringGeom = new THREE.TorusGeometry(ringRadius, 0.2, 8, 32);
-            const ringMat = new THREE.MeshStandardMaterial({
-                color: 0xBF00FF,
-                emissive: 0xBF00FF,
-                emissiveIntensity: 1.5,
-            });
+        // Add lots of glowing rings
+        const ringCount = Math.floor(Math.random() * 4) + 2; // 2 to 5 rings
+        const ringMat = new THREE.MeshStandardMaterial({
+            color: 0xBF00FF,
+            emissive: 0xBF00FF,
+            emissiveIntensity: 1.5,
+        });
+        const ringGeom = new THREE.TorusGeometry(radius + 0.5, 0.2, 8, 32);
+
+        for (let i = 0; i < ringCount; i++) {
             const ring = new THREE.Mesh(ringGeom, ringMat);
             ring.rotation.x = Math.PI / 2;
             ring.position.y = Math.random() * (height - 20) + 10;
             buildingGroup.add(ring);
         }
+
         return [base];
     } else { // Rectangular building variations
         const baseWidth = Math.random() * 8 + 8;
