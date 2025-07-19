@@ -101,12 +101,12 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
         buildingGroup.add(base);
 
         // Add a glowing ring sometimes
-        if (Math.random() > 0.6) {
+        if (Math.random() > 0.4) {
             const ringRadius = radius + 0.5;
             const ringGeom = new THREE.TorusGeometry(ringRadius, 0.2, 8, 32);
             const ringMat = new THREE.MeshStandardMaterial({
-                color: Math.random() > 0.5 ? 0xBF00FF : 0xFFD700,
-                emissive: Math.random() > 0.5 ? 0xBF00FF : 0xFFD700,
+                color: 0xBF00FF,
+                emissive: 0xBF00FF,
                 emissiveIntensity: 1.5,
             });
             const ring = new THREE.Mesh(ringGeom, ringMat);
