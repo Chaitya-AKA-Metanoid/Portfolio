@@ -140,17 +140,17 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     rendererRef.current = renderer;
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0x4B0082, 0.5); // Dark Indigo ambient light
+    const ambientLight = new THREE.AmbientLight(0x4B0082, 0.8); // Dark Indigo ambient light, brighter
     scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7); // Brighter directional
     directionalLight.position.set(50, 50, 25);
     scene.add(directionalLight);
 
-    const pointLight1 = new THREE.PointLight(0xBF00FF, 3, 200, 2); // Electric Purple
+    const pointLight1 = new THREE.PointLight(0xBF00FF, 5, 200, 2); // Electric Purple, brighter
     pointLight1.position.set(-50, 20, -40);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0x00BFFF, 3, 200, 2); // Deep Sky Blue
+    const pointLight2 = new THREE.PointLight(0x00BFFF, 5, 200, 2); // Deep Sky Blue, brighter
     pointLight2.position.set(60, 25, 30);
     scene.add(pointLight2);
     
