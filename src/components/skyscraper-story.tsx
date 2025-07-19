@@ -178,9 +178,14 @@ export default function SkyscraperStory() {
                   : 'opacity-0 translate-y-5 border-transparent'
               )}>
                 <h2 className="font-headline text-3xl font-bold text-accent mb-2">Who Am I?</h2>
-                <p className="text-muted-foreground mb-6">
-                  I am a passionate software architect and creative developer with a love for building immersive digital experiences. My work bridges the gap between complex backend systems and beautiful, intuitive user interfaces.
-                </p>
+                <div className="text-muted-foreground mb-6 space-y-4">
+                    <p>
+                        A CS grad with a builder’s mindset and a storyteller’s curiosity. I code, analyze, write, and constantly explore the “why” behind things. Whether it's backtesting a trading strategy or decoding everyday business behavior, I’m driven by the need to learn fast and build meaningfully.
+                    </p>
+                    <p>
+                        This portfolio is a glimpse into the things I’ve created, questioned, and grown from.
+                    </p>
+                </div>
               </div>
             </div>
           </section>
