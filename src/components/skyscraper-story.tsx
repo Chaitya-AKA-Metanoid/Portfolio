@@ -158,7 +158,7 @@ export default function SkyscraperStory() {
                 showIntro ? "opacity-100" : "opacity-0"
               )}
             >
-                <h1 className="text-6xl md:text-8xl font-headline font-bold animate-glow">Skyscraper Story</h1>
+                <h1 className="text-6xl md:text-8xl font-headline font-bold animate-glow">Chaitya Shah</h1>
                 <p className="mt-4 text-xl text-muted-foreground">An interactive portfolio journey through a futuristic cityscape.</p>
                 <div className="mt-20 text-accent flex flex-col items-center animate-bounce">
                     <span className="text-sm">Scroll to begin</span>

@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Skyscraper Story',
+  title: 'Chaitya Shah',
   description: 'A 3D interactive portfolio experience.',
 };
 
