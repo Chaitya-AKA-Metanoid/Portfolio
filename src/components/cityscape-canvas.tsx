@@ -9,74 +9,53 @@ interface CityscapeCanvasProps {
   scrollProgress: number;
   activeProjectIndex: number;
   cameraPath: { position: [number, number, number]; target: [number, number, number] }[];
-  projects: { buildingIndex: number }[];
+  projects: { position: [number, number, number] }[];
   journeyFinished: boolean;
   weatherData: UpdateCityLightingOutput | null;
 }
 
-// Helper function to create a landmark building
-const createLandmark = (
-  scene: THREE.Group,
-  position: THREE.Vector3,
-  createGeometry: (group: THREE.Group) => THREE.Mesh[],
-  scale = 1
-) => {
-  const landmarkGroup = new THREE.Group();
-  const meshes = createGeometry(landmarkGroup);
-  
-  landmarkGroup.position.copy(position);
-  landmarkGroup.scale.set(scale, scale, scale);
-  scene.add(landmarkGroup);
+const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBuilding: boolean) => {
+  const buildingGroup = new THREE.Group();
+  buildingGroup.position.copy(position);
 
-  return meshes;
-};
+  const material = new THREE.MeshStandardMaterial({
+    color: isProjectBuilding ? 0x4B0082 : 0x1a1a2a,
+    roughness: 0.8,
+    metalness: 0.2,
+    emissive: isProjectBuilding ? 0xBF00FF : 0x000000,
+    emissiveIntensity: 0,
+  });
 
-// --- Landmark Creation Functions ---
+  const bodyHeight = (isProjectBuilding ? 50 : Math.random() * 40 + 20);
+  const bodyWidth = (isProjectBuilding ? 12 : Math.random() * 6 + 4);
+  const bodyDepth = (isProjectBuilding ? 12 : Math.random() * 6 + 4);
 
-// Inspired by The Imperial towers
-const createImperialTowers = (group: THREE.Group) => {
-    const material = new THREE.MeshStandardMaterial({ color: 0x3a3a4a, roughness: 0.7, metalness: 0.3 });
-    const tower1 = new THREE.Mesh(new THREE.CylinderGeometry(2, 2.5, 60, 8), material);
-    tower1.position.set(-3, 30, 0);
+  const bodyGeom = new THREE.BoxGeometry(bodyWidth, bodyHeight, bodyDepth);
+  const body = new THREE.Mesh(bodyGeom, material);
+  body.position.y = bodyHeight / 2;
+  buildingGroup.add(body);
 
-    const tower2 = new THREE.Mesh(new THREE.CylinderGeometry(2, 2.5, 55, 8), material);
-    tower2.position.set(3, 27.5, 0);
+  // Windows
+  if (!isProjectBuilding) {
+    const windowGeom = new THREE.PlaneGeometry(0.8, 1.2);
+    const windowMat = new THREE.MeshStandardMaterial({
+      color: 0x222233,
+      emissive: 0xffff00,
+      emissiveIntensity: Math.random() > 0.3 ? 1 : 0,
+    });
 
-    group.add(tower1, tower2);
-    return [tower1, tower2];
-};
-
-// Inspired by Antilia
-const createAntilia = (group: THREE.Group) => {
-    const material = new THREE.MeshStandardMaterial({ color: 0x2c3e50, roughness: 0.6, metalness: 0.4 });
-    const mainStructure = new THREE.Mesh(new THREE.BoxGeometry(10, 40, 10), material);
-    mainStructure.position.y = 20;
-
-    for (let i = 0; i < 8; i++) {
-        const tierGeom = new THREE.BoxGeometry(10.5, 2, 10.5);
-        const tier = new THREE.Mesh(tierGeom, new THREE.MeshStandardMaterial({ color: 0x34495e, roughness: 0.5 }));
-        tier.position.y = 5 + i * 5;
-        group.add(tier);
+    for (let y = 5; y < bodyHeight - 5; y += 4) {
+      for (let x = -bodyWidth / 2 + 1; x < bodyWidth / 2 - 1; x += 3) {
+        const windowMesh = new THREE.Mesh(windowGeom, windowMat);
+        windowMesh.position.set(x, y - bodyHeight / 2, bodyDepth / 2 + 0.01);
+        body.add(windowMesh);
+      }
     }
-    
-    group.add(mainStructure);
-    return [mainStructure];
+  }
+
+  scene.add(buildingGroup);
+  return [body]; // Return array for consistency
 };
-
-// Inspired by the Taj Mahal Palace Hotel
-const createTajHotel = (group: THREE.Group) => {
-    const material = new THREE.MeshStandardMaterial({ color: 0x7f8c8d, roughness: 0.8 });
-    const mainBuilding = new THREE.Mesh(new THREE.BoxGeometry(20, 15, 8), material);
-    mainBuilding.position.y = 7.5;
-    group.add(mainBuilding);
-
-    const dome = new THREE.Mesh(new THREE.SphereGeometry(6, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0xc0392b }));
-    dome.position.y = 15;
-    group.add(dome);
-    
-    return [mainBuilding, dome];
-};
-
 
 export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath, projects, journeyFinished, weatherData }: CityscapeCanvasProps) {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -85,9 +64,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const projectMeshesRef = useRef<THREE.Mesh[][]>([]);
 
-  const originalColorsRef = useRef<Map<THREE.Mesh, THREE.Color>>(new Map());
-
-  // Use refs for props to access latest values in animation loop without re-triggering useEffect
+  // Use refs for props to access latest values in animation loop
   const propsRef = useRef({ scrollProgress, activeProjectIndex, journeyFinished, weatherData });
   useEffect(() => {
     propsRef.current = { scrollProgress, activeProjectIndex, journeyFinished, weatherData };
@@ -121,53 +98,39 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(50, 50, 25);
     scene.add(directionalLight);
-
+    
     // Cityscape
     const cityGroup = new THREE.Group();
-    projectMeshesRef.current = []; // Reset meshes
+    projectMeshesRef.current = [];
 
-    // Place landmarks
-    const landmarks = [
-      { creator: createImperialTowers, position: new THREE.Vector3(-40, 0, -50), scale: 1.2 },
-      { creator: createAntilia, position: new THREE.Vector3(50, 0, -20), scale: 1.1 },
-      { creator: createTajHotel, position: new THREE.Vector3(0, 0, 15), scale: 1.5 },
-    ];
-
-    landmarks.forEach((landmark, index) => {
-        const meshes = createLandmark(cityGroup, landmark.position, landmark.creator, landmark.scale);
-        if (projects.some(p => p.buildingIndex === index)) {
-            projectMeshesRef.current.push(meshes);
-            meshes.forEach(mesh => {
-                originalColorsRef.current.set(mesh, (mesh.material as THREE.MeshStandardMaterial).color.clone());
-            });
-        }
+    // Create project buildings
+    projects.forEach(project => {
+        const meshes = createBuilding(cityGroup, new THREE.Vector3(...project.position), true);
+        projectMeshesRef.current.push(meshes);
     });
 
-    scene.add(cityGroup);
-
-    // Background Buildings
-    const bgBuildingMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a2a, roughness: 0.8, metalness: 0.2 });
+    // Create background buildings
     for (let i = 0; i < 300; i++) {
-        const height = Math.random() * 40 + 10;
-        const width = Math.random() * 4 + 2;
-        const depth = Math.random() * 4 + 2;
-        const geom = new THREE.BoxGeometry(width, height, depth);
-        const building = new THREE.Mesh(geom, bgBuildingMaterial);
-        
         const x = (Math.random() - 0.5) * 300;
         const z = (Math.random() - 0.5) * 300;
 
-        // Avoid placing them too close to the center/landmarks
-        if (Math.abs(x) < 50 && Math.abs(z) < 50) continue;
+        // Avoid placing them too close to project buildings
+        const isTooClose = projects.some(p => {
+            const dx = x - p.position[0];
+            const dz = z - p.position[2];
+            return Math.sqrt(dx*dx + dz*dz) < 20;
+        });
 
-        building.position.set(x, height / 2, z);
-        scene.add(building);
+        if (!isTooClose) {
+            createBuilding(cityGroup, new THREE.Vector3(x, 0, z), false);
+        }
     }
-
+    
+    scene.add(cityGroup);
 
     // Ground
     const groundGeometry = new THREE.PlaneGeometry(300, 300);
-    const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x080808, roughness: 0.9, reflectivity: 0.1 });
+    const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x080808, roughness: 0.9 });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
     scene.add(ground);
@@ -194,7 +157,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
       // Update camera
       const pathSegment = Math.min(Math.floor(scrollProgress * (cameraPath.length - 1)), cameraPath.length - 2);
       const segmentProgress = (scrollProgress * (cameraPath.length - 1)) - pathSegment;
-
+      
       const startPos = new THREE.Vector3(...cameraPath[pathSegment].position);
       const endPos = new THREE.Vector3(...cameraPath[pathSegment + 1].position);
       cameraRef.current.position.lerpVectors(startPos, endPos, segmentProgress);
@@ -203,7 +166,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
       const endTarget = new THREE.Vector3(...cameraPath[pathSegment + 1].target);
       const currentTarget = new THREE.Vector3().lerpVectors(startTarget, endTarget, segmentProgress);
       cameraRef.current.lookAt(currentTarget);
-      
+
       // Update building animations
       projectMeshesRef.current.forEach((meshGroup, index) => {
         let shouldGlow = false;
@@ -217,7 +180,6 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
         
         meshGroup.forEach(mesh => {
             const material = mesh.material as THREE.MeshStandardMaterial;
-            material.emissive.set(new THREE.Color(0xBF00FF));
             material.emissiveIntensity = THREE.MathUtils.lerp(material.emissiveIntensity, emissiveIntensity, 0.1);
         });
       });
@@ -245,7 +207,6 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
         mountRef.current.removeChild(renderer.domElement);
       }
       renderer.dispose();
-      // Dispose geometries and materials if necessary
     };
   }, [cameraPath, projects]);
 

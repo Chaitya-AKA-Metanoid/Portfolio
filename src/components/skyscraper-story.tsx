@@ -13,42 +13,41 @@ import { cn } from '@/lib/utils';
 
 const projects = [
   {
-    title: 'DeFi Innovation (The Imperial)',
-    description: 'A cutting-edge platform for decentralized finance, leveraging blockchain technology for secure and transparent transactions, inspired by Mumbai\'s iconic twin towers.',
+    title: 'DeFi Innovation',
+    description: 'A cutting-edge platform for decentralized finance, leveraging blockchain technology for secure and transparent transactions.',
     links: { github: '#', website: '#' },
-    buildingIndex: 0, // Corresponds to Imperial Towers
+    position: [-40, 0, -50],
   },
   {
-    title: 'E-commerce Analytics (Antilia)',
-    description: 'A machine learning-powered analytics tool that provides real-time insights for e-commerce businesses, reflecting the modern architecture of Antilia.',
+    title: 'E-commerce Analytics',
+    description: 'A machine learning-powered analytics tool that provides real-time insights for e-commerce businesses.',
     links: { github: '#', website: '#' },
-    buildingIndex: 1, // Corresponds to Antilia
+    position: [50, 0, -20],
   },
   {
-    title: 'Enviro-Monitor (The Taj)',
-    description: 'A cross-platform mobile application for community-driven environmental monitoring, paying homage to the heritage of the Taj Mahal Palace.',
+    title: 'Enviro-Monitor',
+    description: 'A cross-platform mobile application for community-driven environmental monitoring.',
     links: { github: '#', website: '#' },
-    buildingIndex: 2, // Corresponds to Taj Hotel
+    position: [0, 0, 15],
   },
 ];
 
 const cameraPath = [
-  { position: [0, 80, 100], target: [0, 20, 0] },     // 0. Start - Wide overview of the city
-  { position: [-60, 60, -40], target: [-40, 30, -50] }, // 1. Descend towards Imperial Towers
-  { position: [-55, 40, -30], target: [-40, 30, -50] }, // 2. Closer view of Imperial Towers
-  { position: [40, 50, 40], target: [50, 20, -20] },    // 3. Pan towards Antilia
-  { position: [65, 30, 0], target: [50, 20, -20] },     // 4. Closer view of Antilia
-  { position: [20, 40, 50], target: [0, 10, 15] },     // 5. Move towards Taj Hotel
-  { position: [0, 20, 45], target: [0, 10, 15] },      // 6. Closer view of Taj Hotel
-  { position: [0, 15, 60], target: [0, 10, 0] },      // 7. To Contact section, looking at the city center
-  { position: [0, 100, 120], target: [0, 30, 0] },    // 8. Final overview, higher and further back
+    { position: [0, 80, 100], target: [0, 20, 0] },     // 0. Start - Wide overview
+    { position: [-60, 60, -40], target: projects[0].position }, // 1. Descend towards Project 1
+    { position: [-55, 40, -30], target: projects[0].position }, // 2. Closer view of Project 1
+    { position: [40, 50, 40], target: projects[1].position },    // 3. Pan towards Project 2
+    { position: [65, 30, 0], target: projects[1].position },     // 4. Closer view of Project 2
+    { position: [20, 40, 50], target: projects[2].position },     // 5. Move towards Project 3
+    { position: [0, 20, 45], target: projects[2].position },      // 6. Closer view of Project 3
+    { position: [0, 15, 60], target: [0, 10, 0] },      // 7. To Contact section
+    { position: [0, 100, 120], target: [0, 30, 0] },    // 8. Final overview
 ];
-
 
 const loadingMessages = [
     "Initializing experience...",
-    "Building cityscape of Mumbai...",
-    "Checking weather in Mumbai...",
+    "Building cityscape...",
+    "Adjusting cosmic radiation shields...",
     "Finalizing visuals...",
 ];
 
@@ -112,8 +111,6 @@ export default function SkyscraperStory() {
     const sections = projects.length + 2; // Intro, Projects, Contact
     const sectionHeight = 1 / sections;
     
-    // Determine which section is active based on scroll.
-    // We give a bit of space at the top (for intro) and bottom (for contact)
     const projectScrollStart = sectionHeight;
     const projectScrollEnd = 1 - sectionHeight;
     const projectScrollArea = projectScrollEnd - projectScrollStart;
@@ -154,7 +151,6 @@ export default function SkyscraperStory() {
         {memoizedCanvas}
         
         <div className="relative z-10 w-full">
-          {/* Spacer divs define scroll sections */}
           <section className="h-screen flex items-center justify-center flex-col text-center snap-start">
              <div
               className={cn(
@@ -163,7 +159,7 @@ export default function SkyscraperStory() {
               )}
             >
                 <h1 className="text-6xl md:text-8xl font-headline font-bold animate-glow">Skyscraper Story</h1>
-                <p className="mt-4 text-xl text-muted-foreground">An interactive portfolio journey through Mumbai.</p>
+                <p className="mt-4 text-xl text-muted-foreground">An interactive portfolio journey through a futuristic cityscape.</p>
                 <div className="mt-20 text-accent flex flex-col items-center animate-bounce">
                     <span className="text-sm">Scroll to begin</span>
                     <ArrowDown className="h-6 w-6" />
