@@ -20,7 +20,7 @@ const projects = [
   {
     title: 'Fruit Quality Classifier using Machine Learning and IOT',
     description: 'A machine learning-based classification system that detects fruit quality from images using classical computer vision and feature-based modeling.',
-    links: { github: 'https://github.com/Chaitya-shah8' },
+    links: { github: 'https://github.com/Chaitya-shah8/Fruit-Quality' },
     position: [0, 0, 15],
   },
 ];
