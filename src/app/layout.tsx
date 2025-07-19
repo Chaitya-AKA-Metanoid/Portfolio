@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'Chaitya Shah',
-  description: 'A 3D interactive portfolio experience.',
+  description: 'A 3D interactive experience.',
 };
 
 export default function RootLayout({

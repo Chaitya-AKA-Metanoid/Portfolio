@@ -7,7 +7,7 @@ import { CityscapeCanvas } from '@/components/cityscape-canvas';
 import { Loader } from '@/components/loader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Github, Linkedin, Mail, ArrowDown, ExternalLink } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -159,7 +159,7 @@ export default function SkyscraperStory() {
               )}
             >
                 <h1 className="text-6xl md:text-8xl font-headline font-bold animate-glow">Chaitya Shah</h1>
-                <p className="mt-4 text-xl text-muted-foreground">An interactive portfolio journey through a futuristic cityscape.</p>
+                <p className="mt-4 text-xl text-muted-foreground">An interactive journey through a futuristic cityscape.</p>
                 <div className="mt-20 text-accent flex flex-col items-center animate-bounce">
                     <span className="text-sm">Scroll to begin</span>
                     <ArrowDown className="h-6 w-6" />
