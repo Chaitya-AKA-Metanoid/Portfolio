@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
@@ -12,38 +13,41 @@ import { cn } from '@/lib/utils';
 
 const projects = [
   {
-    title: 'Project Alpha',
-    description: 'An innovative platform for decentralized finance, leveraging blockchain technology for secure and transparent transactions.',
+    title: 'DeFi Innovation (The Imperial)',
+    description: 'A cutting-edge platform for decentralized finance, leveraging blockchain technology for secure and transparent transactions, inspired by Mumbai\'s iconic twin towers.',
     links: { github: '#', website: '#' },
-    buildingIndex: 25,
+    buildingIndex: 0, // Corresponds to Imperial Towers
   },
   {
-    title: 'Project Beta',
-    description: 'A machine learning-powered analytics tool that provides real-time insights for e-commerce businesses.',
+    title: 'E-commerce Analytics (Antilia)',
+    description: 'A machine learning-powered analytics tool that provides real-time insights for e-commerce businesses, reflecting the modern architecture of Antilia.',
     links: { github: '#', website: '#' },
-    buildingIndex: 155,
+    buildingIndex: 1, // Corresponds to Antilia
   },
   {
-    title: 'Project Gamma',
-    description: 'A cross-platform mobile application for community-driven environmental monitoring and action.',
+    title: 'Enviro-Monitor (The Taj)',
+    description: 'A cross-platform mobile application for community-driven environmental monitoring, paying homage to the heritage of the Taj Mahal Palace.',
     links: { github: '#', website: '#' },
-    buildingIndex: 325,
+    buildingIndex: 2, // Corresponds to Taj Hotel
   },
 ];
 
 const cameraPath = [
-  { position: [0, 80, 80], target: [0, 0, 0] }, // Start
-  { position: [0, 50, 60], target: [0, 10, 0] }, // Descend
-  { position: [-25, 30, 30], target: [-10, 15, 0] }, // To Project 1
-  { position: [25, 25, 20], target: [10, 12, 0] },  // To Project 2
-  { position: [0, 20, 40], target: [0, 10, -10] }, // To Project 3
-  { position: [0, 5, 20], target: [0, 5, 0] }, // To Contact
-  { position: [0, 40, 100], target: [0, 20, 0] }, // Final overview
+  { position: [0, 80, 100], target: [0, 20, 0] },     // 0. Start - Wide overview of the city
+  { position: [-60, 60, -40], target: [-40, 30, -50] }, // 1. Descend towards Imperial Towers
+  { position: [-55, 40, -30], target: [-40, 30, -50] }, // 2. Closer view of Imperial Towers
+  { position: [40, 50, 40], target: [50, 20, -20] },    // 3. Pan towards Antilia
+  { position: [65, 30, 0], target: [50, 20, -20] },     // 4. Closer view of Antilia
+  { position: [20, 40, 50], target: [0, 10, 15] },     // 5. Move towards Taj Hotel
+  { position: [0, 20, 45], target: [0, 10, 15] },      // 6. Closer view of Taj Hotel
+  { position: [0, 15, 60], target: [0, 10, 0] },      // 7. To Contact section, looking at the city center
+  { position: [0, 100, 120], target: [0, 30, 0] },    // 8. Final overview, higher and further back
 ];
+
 
 const loadingMessages = [
     "Initializing experience...",
-    "Building cityscape...",
+    "Building cityscape of Mumbai...",
     "Checking weather in Mumbai...",
     "Finalizing visuals...",
 ];
@@ -107,11 +111,17 @@ export default function SkyscraperStory() {
 
     const sections = projects.length + 2; // Intro, Projects, Contact
     const sectionHeight = 1 / sections;
-    const activeSection = Math.floor(currentScroll / sectionHeight);
     
-    // Project sections are 1 to projects.length
-    if (activeSection > 0 && activeSection <= projects.length) {
-      setActiveProjectIndex(activeSection - 1);
+    // Determine which section is active based on scroll.
+    // We give a bit of space at the top (for intro) and bottom (for contact)
+    const projectScrollStart = sectionHeight;
+    const projectScrollEnd = 1 - sectionHeight;
+    const projectScrollArea = projectScrollEnd - projectScrollStart;
+    const projectSectionHeight = projectScrollArea / projects.length;
+
+    if (currentScroll > projectScrollStart && currentScroll < projectScrollEnd) {
+      const active = Math.floor((currentScroll - projectScrollStart) / projectSectionHeight);
+      setActiveProjectIndex(active);
     } else {
       setActiveProjectIndex(-1);
     }
@@ -153,7 +163,7 @@ export default function SkyscraperStory() {
               )}
             >
                 <h1 className="text-6xl md:text-8xl font-headline font-bold animate-glow">Skyscraper Story</h1>
-                <p className="mt-4 text-xl text-muted-foreground">An interactive portfolio journey.</p>
+                <p className="mt-4 text-xl text-muted-foreground">An interactive portfolio journey through Mumbai.</p>
                 <div className="mt-20 text-accent flex flex-col items-center animate-bounce">
                     <span className="text-sm">Scroll to begin</span>
                     <ArrowDown className="h-6 w-6" />
