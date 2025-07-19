@@ -19,12 +19,6 @@ const projects = [
     position: [-40, 0, -50],
   },
   {
-    title: 'E-commerce Analytics',
-    description: 'A machine learning-powered analytics tool that provides real-time insights for e-commerce businesses.',
-    links: { github: '#' },
-    position: [50, 0, -20],
-  },
-  {
     title: 'Enviro-Monitor',
     description: 'A cross-platform mobile application for community-driven environmental monitoring.',
     links: { github: '#' },
@@ -37,12 +31,10 @@ const cameraPath = [
     { position: [0, 50, 80], target: [0, 20, 0] },     // 1. Zoom in slightly for "Who Am I?"
     { position: [-20, 60, 0], target: projects[0].position }, // 2. Pan left towards P1
     { position: [-50, 30, -30], target: projects[0].position }, // 3. Zoom in on P1
-    { position: [0, 50, 50], target: projects[1].position },  // 4. Pan right and pull back towards P2
-    { position: [60, 25, 10], target: projects[1].position },   // 5. Zoom in on P2
-    { position: [30, 40, 60], target: projects[2].position },   // 6. Arc towards P3
-    { position: [10, 20, 45], target: projects[2].position },    // 7. Zoom in on P3
-    { position: [0, 10, 60], target: [0, 10, 0] },      // 8. Settle for contact view
-    { position: [0, 100, 120], target: [0, 30, 0] },    // 9. Final wide overview, pulled back
+    { position: [30, 40, 60], target: projects[1].position },   // 4. Arc towards P2
+    { position: [10, 20, 45], target: projects[1].position },    // 5. Zoom in on P2
+    { position: [0, 10, 60], target: [0, 10, 0] },      // 6. Settle for contact view
+    { position: [0, 100, 120], target: [0, 30, 0] },    // 7. Final wide overview, pulled back
 ];
 
 const loadingMessages = [
