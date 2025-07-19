@@ -19,8 +19,8 @@ const projects = [
     position: [-40, 0, -50],
   },
   {
-    title: 'Enviro-Monitor',
-    description: 'A cross-platform mobile application for community-driven environmental monitoring.',
+    title: 'Fruit Quality Classifier using Machine Learning and IOT',
+    description: 'A machine learning-based classification system that detects fruit quality from images using classical computer vision and feature-based modeling.',
     links: { github: 'https://github.com/Chaitya-shah8' },
     position: [0, 0, 15],
   },
