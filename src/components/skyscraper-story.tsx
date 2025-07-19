@@ -34,14 +34,14 @@ const projects = [
 
 const cameraPath = [
     { position: [0, 80, 100], target: [0, 20, 0] },     // 0. Start - Wide overview
-    { position: [-60, 60, -40], target: projects[0].position }, // 1. Descend towards Project 1
-    { position: [-55, 40, -30], target: projects[0].position }, // 2. Closer view of Project 1
-    { position: [40, 50, 40], target: projects[1].position },    // 3. Pan towards Project 2
-    { position: [65, 30, 0], target: projects[1].position },     // 4. Closer view of Project 2
-    { position: [20, 40, 50], target: projects[2].position },     // 5. Move towards Project 3
-    { position: [0, 20, 45], target: projects[2].position },      // 6. Closer view of Project 3
-    { position: [0, 15, 60], target: [0, 10, 0] },      // 7. To Contact section
-    { position: [0, 100, 120], target: [0, 30, 0] },    // 8. Final overview
+    { position: [-20, 60, 0], target: projects[0].position }, // 1. Pan left towards P1
+    { position: [-50, 30, -30], target: projects[0].position }, // 2. Zoom in on P1
+    { position: [0, 50, 50], target: projects[1].position },  // 3. Pan right and pull back towards P2
+    { position: [60, 25, 10], target: projects[1].position },   // 4. Zoom in on P2
+    { position: [30, 40, 60], target: projects[2].position },   // 5. Arc towards P3
+    { position: [10, 20, 45], target: projects[2].position },    // 6. Zoom in on P3
+    { position: [0, 10, 60], target: [0, 10, 0] },      // 7. Settle for contact view
+    { position: [0, 100, 120], target: [0, 30, 0] },    // 8. Final wide overview, pulled back
 ];
 
 const loadingMessages = [
