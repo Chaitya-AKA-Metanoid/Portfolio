@@ -17,26 +17,74 @@ interface CityscapeCanvasProps {
 const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBuilding: boolean) => {
   const buildingGroup = new THREE.Group();
   buildingGroup.position.copy(position);
+  scene.add(buildingGroup);
 
-  const material = new THREE.MeshStandardMaterial({
-    color: isProjectBuilding ? 0x4B0082 : 0x1a1a2a,
-    roughness: 0.8,
-    metalness: 0.2,
-    emissive: isProjectBuilding ? 0xBF00FF : 0x000000,
-    emissiveIntensity: 0,
-  });
+  if (isProjectBuilding) {
+    const meshes: THREE.Mesh[] = [];
 
-  const bodyHeight = (isProjectBuilding ? 50 : Math.random() * 40 + 20);
-  const bodyWidth = (isProjectBuilding ? 12 : Math.random() * 6 + 4);
-  const bodyDepth = (isProjectBuilding ? 12 : Math.random() * 6 + 4);
+    // Main Structure
+    const mainMaterial = new THREE.MeshStandardMaterial({
+      color: 0x2a2a3a,
+      roughness: 0.6,
+      metalness: 0.3,
+    });
+    const mainGeom = new THREE.BoxGeometry(14, 60, 14);
+    const mainBuilding = new THREE.Mesh(mainGeom, mainMaterial);
+    mainBuilding.position.y = 30;
+    buildingGroup.add(mainBuilding);
 
-  const bodyGeom = new THREE.BoxGeometry(bodyWidth, bodyHeight, bodyDepth);
-  const body = new THREE.Mesh(bodyGeom, material);
-  body.position.y = bodyHeight / 2;
-  buildingGroup.add(body);
+    // Glowing Core
+    const coreMaterial = new THREE.MeshStandardMaterial({
+      color: 0xBF00FF,
+      emissive: 0xBF00FF,
+      emissiveIntensity: 0,
+    });
+    const coreGeom = new THREE.CylinderGeometry(2, 2, 65, 16);
+    const core = new THREE.Mesh(coreGeom, coreMaterial);
+    core.position.y = 32.5;
+    buildingGroup.add(core);
+    meshes.push(core); // This will be the part that glows
 
-  // Windows
-  if (!isProjectBuilding) {
+    // Holographic Rings
+    const ringGeom = new THREE.TorusGeometry(8, 0.2, 8, 32);
+    const ringMat = new THREE.MeshBasicMaterial({
+        color: 0xBF00FF,
+        transparent: true,
+        opacity: 0.5,
+        side: THREE.DoubleSide
+    });
+    const ring1 = new THREE.Mesh(ringGeom, ringMat);
+    ring1.position.y = 20;
+    ring1.rotation.x = Math.PI / 2;
+    buildingGroup.add(ring1);
+    
+    const ring2 = ring1.clone();
+    ring2.position.y = 40;
+    ring2.scale.set(0.8, 0.8, 0.8);
+    buildingGroup.add(ring2);
+
+    buildingGroup.userData.rings = [ring1, ring2];
+
+    return meshes;
+
+  } else {
+    // Background buildings
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x1a1a2a,
+      roughness: 0.8,
+      metalness: 0.2,
+    });
+
+    const bodyHeight = Math.random() * 40 + 20;
+    const bodyWidth = Math.random() * 6 + 4;
+    const bodyDepth = Math.random() * 6 + 4;
+
+    const bodyGeom = new THREE.BoxGeometry(bodyWidth, bodyHeight, bodyDepth);
+    const body = new THREE.Mesh(bodyGeom, material);
+    body.position.y = bodyHeight / 2;
+    buildingGroup.add(body);
+
+    // Windows
     const windowGeom = new THREE.PlaneGeometry(0.8, 1.2);
     const windowMat = new THREE.MeshStandardMaterial({
       color: 0x222233,
@@ -46,15 +94,16 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
 
     for (let y = 5; y < bodyHeight - 5; y += 4) {
       for (let x = -bodyWidth / 2 + 1; x < bodyWidth / 2 - 1; x += 3) {
-        const windowMesh = new THREE.Mesh(windowGeom, windowMat);
-        windowMesh.position.set(x, y - bodyHeight / 2, bodyDepth / 2 + 0.01);
-        body.add(windowMesh);
+        if (Math.random() > 0.2) { // Add some randomness to window placement
+            const windowMesh = new THREE.Mesh(windowGeom, windowMat);
+            windowMesh.position.set(x, y - bodyHeight / 2 + (Math.random()-0.5), bodyDepth / 2 + 0.01);
+            windowMesh.rotation.z = (Math.random() - 0.5) * 0.05;
+            body.add(windowMesh);
+        }
       }
     }
+    return [body]; // Return array for consistency
   }
-
-  scene.add(buildingGroup);
-  return [body]; // Return array for consistency
 };
 
 export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath, projects, journeyFinished, weatherData }: CityscapeCanvasProps) {
@@ -62,7 +111,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const projectMeshesRef = useRef<THREE.Mesh[][]>([]);
+  const projectBuildingGroupsRef = useRef<THREE.Group[]>([]);
 
   // Use refs for props to access latest values in animation loop
   const propsRef = useRef({ scrollProgress, activeProjectIndex, journeyFinished, weatherData });
@@ -101,12 +150,15 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     
     // Cityscape
     const cityGroup = new THREE.Group();
-    projectMeshesRef.current = [];
+    projectBuildingGroupsRef.current = [];
 
     // Create project buildings
     projects.forEach(project => {
-        const meshes = createBuilding(cityGroup, new THREE.Vector3(...project.position), true);
-        projectMeshesRef.current.push(meshes);
+        const buildingGroup = new THREE.Group();
+        const meshes = createBuilding(buildingGroup, new THREE.Vector3(...project.position), true);
+        (buildingGroup.children[0] as THREE.Group).userData.meshes = meshes; // Attach meshes to the inner group for animation
+        cityGroup.add(buildingGroup.children[0]); // Add the building group directly
+        projectBuildingGroupsRef.current.push((buildingGroup.children[0] as THREE.Group));
     });
 
     // Create background buildings
@@ -168,7 +220,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
       cameraRef.current.lookAt(currentTarget);
 
       // Update building animations
-      projectMeshesRef.current.forEach((meshGroup, index) => {
+      projectBuildingGroupsRef.current.forEach((buildingGroup, index) => {
         let shouldGlow = false;
         if (journeyFinished) {
           shouldGlow = true;
@@ -176,12 +228,19 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
           shouldGlow = true;
         }
         
-        const emissiveIntensity = shouldGlow ? Math.sin(elapsedTime * 3 + index) * 0.25 + 0.75 : 0;
+        const emissiveIntensity = shouldGlow ? Math.sin(elapsedTime * 3 + index) * 0.5 + 1.5 : 0;
         
-        meshGroup.forEach(mesh => {
-            const material = mesh.material as THREE.MeshStandardMaterial;
-            material.emissiveIntensity = THREE.MathUtils.lerp(material.emissiveIntensity, emissiveIntensity, 0.1);
-        });
+        if (buildingGroup.userData.meshes) {
+            buildingGroup.userData.meshes.forEach((mesh: THREE.Mesh) => {
+                const material = mesh.material as THREE.MeshStandardMaterial;
+                material.emissiveIntensity = THREE.MathUtils.lerp(material.emissiveIntensity, emissiveIntensity, 0.1);
+            });
+        }
+        
+        if(buildingGroup.userData.rings) {
+            buildingGroup.userData.rings[0].rotation.z = elapsedTime * 0.2;
+            buildingGroup.userData.rings[1].rotation.z = -elapsedTime * 0.1;
+        }
       });
 
       // Update weather
@@ -203,8 +262,8 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (mountRef.current) {
-        mountRef.current.removeChild(renderer.domElement);
+      if (mountRef.current && rendererRef.current) {
+        mountRef.current.removeChild(rendererRef.current.domElement);
       }
       renderer.dispose();
     };
