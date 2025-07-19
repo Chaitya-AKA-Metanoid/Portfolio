@@ -143,7 +143,8 @@ export default function SkyscraperStory() {
         <section className="h-screen flex flex-col items-center justify-center snap-start container mx-auto px-4">
             <div className={cn(
                 "w-full max-w-lg transition-all duration-500",
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5',
+                isVisible && "shadow-[0_0_15px_hsl(var(--accent)),_0_0_30px_hsl(var(--accent)),_0_0_60px_hsl(var(--accent))]"
             )}>
                 {children}
             </div>

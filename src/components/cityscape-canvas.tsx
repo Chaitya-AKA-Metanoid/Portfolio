@@ -90,6 +90,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const projectBuildingGroupsRef = useRef<THREE.Group[]>([]);
+  const mousePosRef = useRef({ x: 0, y: 0 });
 
   // Use refs for props to access latest values in animation loop
   const propsRef = useRef({ scrollProgress, activeProjectIndex, journeyFinished });
@@ -101,6 +102,16 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     if (!mountRef.current) return;
 
     const currentMount = mountRef.current;
+
+    // --- Mouse tracking ---
+    const handleMouseMove = (event: MouseEvent) => {
+        if (mountRef.current) {
+            const rect = mountRef.current.getBoundingClientRect();
+            mousePosRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mousePosRef.current.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
+        }
+    };
+    window.addEventListener('mousemove', handleMouseMove);
 
     // Scene
     const scene = new THREE.Scene();
@@ -195,6 +206,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
 
     // Animation loop
     const clock = new THREE.Clock();
+    let finalTarget = new THREE.Vector3();
     const animate = () => {
       requestAnimationFrame(animate);
       if (!rendererRef.current || !sceneRef.current || !cameraRef.current) return;
@@ -213,7 +225,15 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
       const startTarget = new THREE.Vector3(...cameraPath[pathSegment].target);
       const endTarget = new THREE.Vector3(...cameraPath[pathSegment + 1].target);
       const currentTarget = new THREE.Vector3().lerpVectors(startTarget, endTarget, segmentProgress);
-      cameraRef.current.lookAt(currentTarget);
+      
+      // Add mouse look
+      const lookAtOffset = new THREE.Vector3(mousePosRef.current.x * 5, mousePosRef.current.y * 5, 0);
+      const targetWithMouse = currentTarget.clone().add(lookAtOffset);
+      
+      // Smoothly interpolate the final target
+      finalTarget.lerp(targetWithMouse, 0.1);
+
+      cameraRef.current.lookAt(finalTarget);
 
       // Update building animations
       projectBuildingGroupsRef.current.forEach((buildingGroup, index) => {
@@ -239,6 +259,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     animate();
 
     return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
       if (mountRef.current && rendererRef.current) {
         mountRef.current.removeChild(rendererRef.current.domElement);
