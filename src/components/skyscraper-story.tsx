@@ -25,15 +25,21 @@ const projects = [
   },
 ];
 
+const skills = {
+    position: [40, 0, -50]
+};
+
 const cameraPath = [
-    { position: [0, 80, 100], target: [0, 20, 0] },     // 0. Start - Wide overview
-    { position: [0, 50, 80], target: [0, 20, 0] },     // 1. Zoom in slightly for "Who Am I?"
-    { position: [-20, 60, 0], target: projects[0].position }, // 2. Pan left towards P1
-    { position: [-50, 30, -30], target: projects[0].position }, // 3. Zoom in on P1
-    { position: [30, 40, 60], target: projects[1].position },   // 4. Arc towards P2
-    { position: [10, 20, 45], target: projects[1].position },    // 5. Zoom in on P2
-    { position: [0, 10, 60], target: [0, 10, 0] },      // 6. Settle for contact view
-    { position: [0, 100, 120], target: [0, 30, 0] },    // 7. Final wide overview, pulled back
+    { position: [0, 80, 100], target: [0, 20, 0] },      // 0. Start - Wide overview
+    { position: [0, 50, 80], target: [0, 20, 0] },      // 1. Zoom in slightly for "Who Am I?"
+    { position: [20, 40, -30], target: skills.position }, // 2. Pan right towards Skills
+    { position: [50, 25, -35], target: skills.position },   // 3. Zoom in on Skills
+    { position: [-20, 60, 0], target: projects[0].position },  // 4. Pan left towards P1
+    { position: [-50, 30, -30], target: projects[0].position }, // 5. Zoom in on P1
+    { position: [30, 40, 60], target: projects[1].position },    // 6. Arc towards P2
+    { position: [10, 20, 45], target: projects[1].position },     // 7. Zoom in on P2
+    { position: [0, 10, 60], target: [0, 10, 0] },       // 8. Settle for contact view
+    { position: [0, 100, 120], target: [0, 30, 0] },     // 9. Final wide overview, pulled back
 ];
 
 const loadingMessages = [
@@ -51,6 +57,7 @@ export default function SkyscraperStory() {
   const [journeyFinished, setJourneyFinished] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const [showWhoAmI, setShowWhoAmI] = useState(false);
+  const [showSkills, setShowSkills] = useState(false);
   
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -88,14 +95,18 @@ export default function SkyscraperStory() {
 
     setShowIntro(currentScroll < 0.05);
 
-    const sections = projects.length + 3; // Intro, Who Am I, Projects, Contact
+    const sections = projects.length + 4; // Intro, Who Am I, Skills, Projects, Contact
     const sectionHeight = 1 / sections;
 
     const whoAmIStart = sectionHeight;
     const whoAmIEnd = sectionHeight * 2;
-    setShowWhoAmI(currentScroll > whoAmIStart * 0.5 && currentScroll < whoAmIEnd);
+    setShowWhoAmI(currentScroll > whoAmIStart * 0.5 && currentScroll < whoAmIEnd + sectionHeight * 0.5);
+
+    const skillsStart = whoAmIEnd;
+    const skillsEnd = sectionHeight * 3;
+    setShowSkills(currentScroll > skillsStart * 0.5 && currentScroll < skillsEnd + sectionHeight * 0.5);
     
-    const projectScrollStart = whoAmIEnd;
+    const projectScrollStart = skillsEnd;
     const projectScrollEnd = 1 - sectionHeight;
     const projectScrollArea = projectScrollEnd - projectScrollStart;
     const projectSectionHeight = projectScrollArea / projects.length;
@@ -175,18 +186,46 @@ export default function SkyscraperStory() {
                 <h2 className="font-headline text-3xl font-bold text-accent mb-2">Who Am I?</h2>
                 <div className="text-muted-foreground mb-6 space-y-4">
                     <p>
-                        a CS grad with a builder’s mindset and a storyteller’s curiosity. I code, analyze, write, and constantly explore the “why” behind things. Whether it's backtesting a trading strategy or decoding everyday business behavior, I’m driven by the need to learn fast and build meaningfully.
+                        I'm a CS grad with a builder’s mindset and a storyteller’s curiosity. I thrive on diving deep, whether it's backtesting a trading strategy, decoding business behavior, or bringing a creative project to life.
                     </p>
                     <p>
-                        This portfolio is a glimpse into the things I’ve created, questioned, and grown from
+                        My passion lies at the intersection of technology and creative problem-solving. I'm driven by the need to learn fast, build meaningfully, and understand the "why" behind things. 
                     </p>
+                    <p>
+                        This portfolio is a glimpse into the things I’ve created, questioned, and grown from.
+                    </p>
+                </div>
+              </div>
+          </ContentWrapper>
+          
+          <ContentWrapper alignment="start">
+              <div className={cn(
+                "p-6 rounded-lg bg-black/40 backdrop-blur-md transition-all duration-500 border border-transparent",
+                showSkills
+                  ? 'opacity-100 translate-y-0 border-accent/30 shadow-[0_0_40px_-10px_hsl(var(--accent))]' 
+                  : 'opacity-0 translate-y-5'
+              )}>
+                <h2 className="font-headline text-3xl font-bold text-accent mb-4">Skills</h2>
+                <div className="space-y-4">
+                    <div>
+                        <h3 className="font-semibold text-lg text-foreground mb-2">Languages</h3>
+                        <p className="text-muted-foreground">Python, JavaScript, TypeScript, C++, SQL, HTML/CSS</p>
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-lg text-foreground mb-2">Frameworks & Libraries</h3>
+                        <p className="text-muted-foreground">React, Next.js, Node.js, TensorFlow, PyTorch, Pandas, Scikit-learn, Three.js</p>
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-lg text-foreground mb-2">Databases</h3>
+                        <p className="text-muted-foreground">MySQL, PostgreSQL, MongoDB, Firebase</p>
+                    </div>
                 </div>
               </div>
           </ContentWrapper>
 
 
           {projects.map((project, index) => (
-             <ContentWrapper key={index} alignment="start">
+             <ContentWrapper key={index} alignment={index % 2 === 0 ? "start" : "end"}>
                   <div className={cn(
                     "p-6 rounded-lg bg-black/40 backdrop-blur-md transition-all duration-500 border border-transparent",
                     activeProjectIndex === index 
