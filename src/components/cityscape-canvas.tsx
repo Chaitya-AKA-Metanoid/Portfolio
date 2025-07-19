@@ -154,11 +154,12 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
 
     // Create project buildings
     projects.forEach(project => {
-        const buildingGroup = new THREE.Group();
-        const meshes = createBuilding(buildingGroup, new THREE.Vector3(...project.position), true);
-        (buildingGroup.children[0] as THREE.Group).userData.meshes = meshes; // Attach meshes to the inner group for animation
-        cityGroup.add(buildingGroup.children[0]); // Add the building group directly
-        projectBuildingGroupsRef.current.push((buildingGroup.children[0] as THREE.Group));
+        const buildingContainerGroup = new THREE.Group();
+        const meshes = createBuilding(buildingContainerGroup, new THREE.Vector3(...project.position), true);
+        const buildingGroup = buildingContainerGroup.children[0] as THREE.Group;
+        buildingGroup.userData.meshes = meshes; // Attach meshes to the inner group for animation
+        cityGroup.add(buildingGroup); // Add the building group directly
+        projectBuildingGroupsRef.current.push(buildingGroup);
     });
 
     // Create background buildings
