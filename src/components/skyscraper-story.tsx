@@ -41,9 +41,16 @@ const cameraPath = [
   { position: [0, 40, 100], target: [0, 20, 0] }, // Final overview
 ];
 
+const loadingMessages = [
+    "Initializing experience...",
+    "Building cityscape...",
+    "Checking weather in Mumbai...",
+    "Finalizing visuals...",
+];
+
 export default function SkyscraperStory() {
   const [loading, setLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState('Building Mumbai...');
+  const [loadingText, setLoadingText] = useState(loadingMessages[0]);
   const [weatherData, setWeatherData] = useState<UpdateCityLightingOutput | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeProjectIndex, setActiveProjectIndex] = useState(-1);
@@ -54,8 +61,15 @@ export default function SkyscraperStory() {
   const { toast } = useToast();
 
   useEffect(() => {
-    setLoadingText('Checking weather in Mumbai...');
-    updateCityLighting({})
+    let messageIndex = 0;
+    const interval = setInterval(() => {
+        messageIndex++;
+        if (messageIndex < loadingMessages.length) {
+            setLoadingText(loadingMessages[messageIndex]);
+        }
+    }, 1500);
+
+    const weatherPromise = updateCityLighting({})
       .then(setWeatherData)
       .catch(() => {
         toast({
@@ -63,12 +77,17 @@ export default function SkyscraperStory() {
           description: "Could not fetch dynamic weather. Using default lighting.",
           variant: "destructive",
         });
-      })
-      .finally(() => {
-        // Add a small delay to appreciate the visuals
-        setTimeout(() => setLoading(false), 1500);
       });
+
+    Promise.all([weatherPromise, new Promise(resolve => setTimeout(resolve, loadingMessages.length * 1500))])
+      .finally(() => {
+        clearInterval(interval);
+        setTimeout(() => setLoading(false), 500); // Short delay for smooth transition
+      });
+      
+    return () => clearInterval(interval);
   }, [toast]);
+
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
