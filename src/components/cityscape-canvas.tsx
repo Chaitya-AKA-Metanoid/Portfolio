@@ -160,9 +160,9 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     });
 
     // Create background buildings
-    for (let i = 0; i < 300; i++) {
-        const x = (Math.random() - 0.5) * 300;
-        const z = (Math.random() - 0.5) * 300;
+    for (let i = 0; i < 500; i++) {
+        const x = (Math.random() - 0.5) * 400;
+        const z = (Math.random() - 0.5) * 400;
 
         // Avoid placing them too close to project buildings
         const isTooClose = projects.some(p => {
@@ -179,7 +179,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     scene.add(cityGroup);
 
     // Ground
-    const groundGeometry = new THREE.PlaneGeometry(300, 300);
+    const groundGeometry = new THREE.PlaneGeometry(400, 400);
     const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x080808, roughness: 0.9 });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
