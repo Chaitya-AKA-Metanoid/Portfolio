@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef } from 'react';
@@ -64,25 +65,59 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     const buildingPadding = 1.5;
     let buildingIndexCounter = 0;
     
-    const buildingMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a2a });
+    const materials = [
+      new THREE.MeshStandardMaterial({ color: 0x1a1a2a, roughness: 0.8, metalness: 0.2 }),
+      new THREE.MeshStandardMaterial({ color: 0x212131, roughness: 0.7, metalness: 0.3 }),
+      new THREE.MeshStandardMaterial({ color: 0x151525, roughness: 0.9, metalness: 0.1 }),
+      new THREE.MeshStandardMaterial({
+        color: 0x2a2a3a,
+        roughness: 0.6,
+        metalness: 0.4,
+        emissive: 0xBF00FF,
+        emissiveIntensity: 0.01
+      }),
+    ];
 
-    for (let x = -citySize; x < citySize; x+=3) {
-      for (let z = -citySize; z < citySize; z+=3) {
-        if (Math.random() > 0.1) {
-          const height = Math.random() * 20 + 5;
-          const geometry = new THREE.BoxGeometry(2, height, 2);
-          const building = new THREE.Mesh(geometry, buildingMaterial);
-          building.position.set(x + (Math.random() - 0.5) * buildingPadding, height / 2, z + (Math.random() - 0.5) * buildingPadding);
-          cityGroup.add(building);
-          
-          if (projects.some(p => p.buildingIndex === buildingIndexCounter)) {
-            building.scale.set(1.5, 1.8, 1.5);
-            projectMeshesRef.current.push(building);
-            originalColorsRef.current.set(building, buildingMaterial.color.clone());
-          }
-          buildingIndexCounter++;
+    for (let x = -citySize; x < citySize; x += 3) {
+        for (let z = -citySize; z < citySize; z += 3) {
+            if (Math.random() > 0.15) {
+                const building = new THREE.Group();
+
+                const height = Math.random() * 20 + 5;
+                const width = Math.random() * 1.5 + 1;
+                const depth = Math.random() * 1.5 + 1;
+                
+                const material = materials[Math.floor(Math.random() * materials.length)];
+                
+                // Main building structure
+                const mainGeom = new THREE.BoxGeometry(width, height, depth);
+                const mainBuilding = new THREE.Mesh(mainGeom, material);
+                mainBuilding.position.y = height / 2;
+                building.add(mainBuilding);
+
+                // Add some detail
+                if (Math.random() > 0.5) {
+                    const topHeight = Math.random() * 5 + 2;
+                    const topWidth = width * (Math.random() * 0.3 + 0.6);
+                    const topDepth = depth * (Math.random() * 0.3 + 0.6);
+                    const topGeom = new THREE.BoxGeometry(topWidth, topHeight, topDepth);
+                    const topPart = new THREE.Mesh(topGeom, material);
+                    topPart.position.y = height + topHeight / 2;
+                    building.add(topPart);
+                }
+
+                building.position.set(x + (Math.random() - 0.5) * buildingPadding, 0, z + (Math.random() - 0.5) * buildingPadding);
+                cityGroup.add(building);
+
+                if (projects.some(p => p.buildingIndex === buildingIndexCounter)) {
+                    building.scale.set(1.5, 1.8, 1.5);
+                    const projectMesh = building.children[0] as THREE.Mesh;
+                    projectMeshesRef.current.push(projectMesh);
+                    originalColorsRef.current.set(projectMesh, (projectMesh.material as THREE.MeshStandardMaterial).color.clone());
+                }
+                buildingIndexCounter++;
+            }
         }
-      }
     }
     scene.add(cityGroup);
 
