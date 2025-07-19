@@ -7,7 +7,7 @@ import { CityscapeCanvas } from '@/components/cityscape-canvas';
 import { Loader } from '@/components/loader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Github, Linkedin, Mail, ArrowDown } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowDown, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -211,6 +211,12 @@ export default function SkyscraperStory() {
                        <Linkedin className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
                     <p className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">LinkedIn</p>
+                 </a>
+                 <a href="/resume.pdf" download="Chaitya_Shah_Resume.pdf" className="group">
+                    <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
+                        <FileText className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
+                    </div>
+                    <p className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">Resume</p>
                  </a>
                  <a href="https://github.com/Chaitya-shah8" target="_blank" rel="noopener noreferrer" className="group">
                     <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
