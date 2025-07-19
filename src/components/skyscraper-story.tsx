@@ -172,10 +172,10 @@ export default function SkyscraperStory() {
                 <h2 className="font-headline text-3xl font-bold text-accent mb-2">Who Am I?</h2>
                 <div className="text-muted-foreground mb-6 space-y-4">
                     <p>
-                        A CS grad with a builder’s mindset and a storyteller’s curiosity. I code, analyze, write, and constantly explore the “why” behind things. Whether it's backtesting a trading strategy or decoding everyday business behavior, I’m driven by the need to learn fast and build meaningfully.
+                        a CS grad with a builder’s mindset and a storyteller’s curiosity. I code, analyze, write, and constantly explore the “why” behind things. Whether it's backtesting a trading strategy or decoding everyday business behavior, I’m driven by the need to learn fast and build meaningfully.
                     </p>
                     <p>
-                        This portfolio is a glimpse into the things I’ve created, questioned, and grown from.
+                        This portfolio is a glimpse into the things I’ve created, questioned, and grown from
                     </p>
                 </div>
               </div>
@@ -212,7 +212,7 @@ export default function SkyscraperStory() {
                     </div>
                     <p className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">LinkedIn</p>
                  </a>
-                 <a href="/resume.pdf" download="Chaitya_Shah_Resume.pdf" className="group">
+                 <a href="/ChaityaShah_resume_.pdf" download="ChaityaShah_resume_.pdf" className="group">
                     <div className="p-4 rounded-full border-2 border-transparent group-hover:border-accent group-hover:bg-accent/10 transition-all">
                         <FileText className="h-10 w-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
