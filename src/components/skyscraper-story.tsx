@@ -34,14 +34,15 @@ const projects = [
 
 const cameraPath = [
     { position: [0, 80, 100], target: [0, 20, 0] },     // 0. Start - Wide overview
-    { position: [-20, 60, 0], target: projects[0].position }, // 1. Pan left towards P1
-    { position: [-50, 30, -30], target: projects[0].position }, // 2. Zoom in on P1
-    { position: [0, 50, 50], target: projects[1].position },  // 3. Pan right and pull back towards P2
-    { position: [60, 25, 10], target: projects[1].position },   // 4. Zoom in on P2
-    { position: [30, 40, 60], target: projects[2].position },   // 5. Arc towards P3
-    { position: [10, 20, 45], target: projects[2].position },    // 6. Zoom in on P3
-    { position: [0, 10, 60], target: [0, 10, 0] },      // 7. Settle for contact view
-    { position: [0, 100, 120], target: [0, 30, 0] },    // 8. Final wide overview, pulled back
+    { position: [0, 50, 80], target: [0, 20, 0] },     // 1. Zoom in slightly for "Who Am I?"
+    { position: [-20, 60, 0], target: projects[0].position }, // 2. Pan left towards P1
+    { position: [-50, 30, -30], target: projects[0].position }, // 3. Zoom in on P1
+    { position: [0, 50, 50], target: projects[1].position },  // 4. Pan right and pull back towards P2
+    { position: [60, 25, 10], target: projects[1].position },   // 5. Zoom in on P2
+    { position: [30, 40, 60], target: projects[2].position },   // 6. Arc towards P3
+    { position: [10, 20, 45], target: projects[2].position },    // 7. Zoom in on P3
+    { position: [0, 10, 60], target: [0, 10, 0] },      // 8. Settle for contact view
+    { position: [0, 100, 120], target: [0, 30, 0] },    // 9. Final wide overview, pulled back
 ];
 
 const loadingMessages = [
@@ -59,6 +60,7 @@ export default function SkyscraperStory() {
   const [activeProjectIndex, setActiveProjectIndex] = useState(-1);
   const [journeyFinished, setJourneyFinished] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
+  const [showWhoAmI, setShowWhoAmI] = useState(false);
   
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -102,16 +104,16 @@ export default function SkyscraperStory() {
     
     setScrollProgress(currentScroll);
 
-    if(currentScroll > 0.05) {
-      setShowIntro(false);
-    } else {
-      setShowIntro(true);
-    }
+    setShowIntro(currentScroll < 0.05);
 
-    const sections = projects.length + 2; // Intro, Projects, Contact
+    const sections = projects.length + 3; // Intro, Who Am I, Projects, Contact
     const sectionHeight = 1 / sections;
+
+    const whoAmIStart = sectionHeight;
+    const whoAmIEnd = sectionHeight * 2;
+    setShowWhoAmI(currentScroll > whoAmIStart * 0.5 && currentScroll < whoAmIEnd);
     
-    const projectScrollStart = sectionHeight;
+    const projectScrollStart = whoAmIEnd;
     const projectScrollEnd = 1 - sectionHeight;
     const projectScrollArea = projectScrollEnd - projectScrollStart;
     const projectSectionHeight = projectScrollArea / projects.length;
@@ -165,6 +167,22 @@ export default function SkyscraperStory() {
                     <ArrowDown className="h-6 w-6" />
                 </div>
              </div>
+          </section>
+
+          <section className="h-screen flex items-center justify-end snap-start">
+            <div className="container mx-auto px-4 flex justify-end">
+              <div className={cn(
+                "w-full max-w-md p-6 rounded-lg border-2 bg-black/30 backdrop-blur-sm transition-all duration-500",
+                showWhoAmI
+                  ? 'opacity-100 translate-y-0 border-accent/50 shadow-[0_0_30px_-5px_hsl(var(--accent))]' 
+                  : 'opacity-0 translate-y-5 border-transparent'
+              )}>
+                <h2 className="font-headline text-3xl font-bold text-accent mb-2">Who Am I?</h2>
+                <p className="text-muted-foreground mb-6">
+                  I am a passionate software architect and creative developer with a love for building immersive digital experiences. My work bridges the gap between complex backend systems and beautiful, intuitive user interfaces.
+                </p>
+              </div>
+            </div>
           </section>
 
           {projects.map((project, index) => (
