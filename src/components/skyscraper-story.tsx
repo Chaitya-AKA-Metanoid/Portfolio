@@ -15,19 +15,19 @@ const projects = [
   {
     title: 'DeFi Innovation',
     description: 'A cutting-edge platform for decentralized finance, leveraging blockchain technology for secure and transparent transactions.',
-    links: { github: '#', website: '#' },
+    links: { github: '#' },
     position: [-40, 0, -50],
   },
   {
     title: 'E-commerce Analytics',
     description: 'A machine learning-powered analytics tool that provides real-time insights for e-commerce businesses.',
-    links: { github: '#', website: '#' },
+    links: { github: '#' },
     position: [50, 0, -20],
   },
   {
     title: 'Enviro-Monitor',
     description: 'A cross-platform mobile application for community-driven environmental monitoring.',
-    links: { github: '#', website: '#' },
+    links: { github: '#' },
     position: [0, 0, 15],
   },
 ];
@@ -180,7 +180,6 @@ export default function SkyscraperStory() {
                     <p className="text-muted-foreground mb-6">{project.description}</p>
                     <div className="flex space-x-4">
                       <Button variant="ghost" className="text-muted-foreground hover:text-accent hover:bg-accent/10" size="sm" asChild><a href={project.links.github} target="_blank" rel="noopener noreferrer"><Github /> GitHub</a></Button>
-                      <Button variant="ghost" className="text-muted-foreground hover:text-accent hover:bg-accent/10" size="sm" asChild><a href={project.links.website} target="_blank" rel="noopener noreferrer"><ExternalLink /> Website</a></Button>
                     </div>
                   </div>
                </div>
