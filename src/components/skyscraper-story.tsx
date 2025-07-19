@@ -13,8 +13,8 @@ import { cn } from '@/lib/utils';
 
 const projects = [
   {
-    title: 'DeFi Innovation',
-    description: 'A cutting-edge platform for decentralized finance, leveraging blockchain technology for secure and transparent transactions.',
+    title: 'Alpha Hunter',
+    description: 'A cutting-edge financial forecasting model leveraging the Temporal Fusion Transformer (TFT) to predict asset returns and quantify the influence of economic indicators using historical stock data.',
     links: { github: 'https://github.com/Chaitya-shah8' },
     position: [-40, 0, -50],
   },
