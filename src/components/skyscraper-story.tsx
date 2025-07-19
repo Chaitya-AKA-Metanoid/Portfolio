@@ -7,7 +7,7 @@ import { CityscapeCanvas } from '@/components/cityscape-canvas';
 import { Loader } from '@/components/loader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Github, Linkedin, Mail, ArrowDown } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowDown, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -170,22 +170,19 @@ export default function SkyscraperStory() {
           {projects.map((project, index) => (
              <section key={index} className="h-screen flex items-center justify-start snap-start">
                <div className="container mx-auto px-4">
-                  <Card className={cn(
-                    "w-full max-w-md bg-card/70 backdrop-blur-md border-accent/20 shadow-2xl shadow-accent/10 transition-all duration-500",
-                    activeProjectIndex === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+                  <div className={cn(
+                    "w-full max-w-md p-6 rounded-lg border-2 bg-black/30 backdrop-blur-sm transition-all duration-500",
+                    activeProjectIndex === index 
+                      ? 'opacity-100 translate-y-0 border-accent/50 shadow-[0_0_30px_-5px_hsl(var(--accent))]' 
+                      : 'opacity-0 translate-y-5 border-transparent'
                   )}>
-                    <CardHeader>
-                      <CardTitle className="font-headline text-3xl text-accent">{project.title}</CardTitle>
-                      <CardDescription>{weatherData?.condition || 'A metropolis of innovation'}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="mb-6">{project.description}</p>
-                      <div className="flex space-x-4">
-                        <Button variant="outline" size="sm" asChild><a href={project.links.github} target="_blank" rel="noopener noreferrer"><Github /> GitHub</a></Button>
-                        <Button variant="outline" size="sm" asChild><a href={project.links.website} target="_blank" rel="noopener noreferrer">Website</a></Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    <h2 className="font-headline text-3xl font-bold text-accent mb-2">{project.title}</h2>
+                    <p className="text-muted-foreground mb-6">{project.description}</p>
+                    <div className="flex space-x-4">
+                      <Button variant="ghost" className="text-muted-foreground hover:text-accent hover:bg-accent/10" size="sm" asChild><a href={project.links.github} target="_blank" rel="noopener noreferrer"><Github /> GitHub</a></Button>
+                      <Button variant="ghost" className="text-muted-foreground hover:text-accent hover:bg-accent/10" size="sm" asChild><a href={project.links.website} target="_blank" rel="noopener noreferrer"><ExternalLink /> Website</a></Button>
+                    </div>
+                  </div>
                </div>
              </section>
           ))}
