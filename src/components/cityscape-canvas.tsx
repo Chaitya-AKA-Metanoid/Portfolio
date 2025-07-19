@@ -74,7 +74,7 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
       for (let x = -bodyWidth / 2 + 1; x < bodyWidth / 2 - 1; x += 3) {
         if (Math.random() > 0.2) { // Add some randomness to window placement
             const windowMesh = new THREE.Mesh(windowGeom, windowMat);
-            windowMesh.position.set(x, y - bodyHeight / 2 + (Math.random()-0.5), bodyDepth / 2 + 0.01);
+            windowMesh.position.set(x, y, bodyDepth / 2 + 0.01);
             windowMesh.rotation.z = (Math.random() - 0.5) * 0.05;
             body.add(windowMesh);
         }
@@ -104,7 +104,7 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
 
     // Scene
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x121212, 0.007); // Slightly reduced fog density
+    scene.fog = new THREE.FogExp2(0x121212, 0.007);
     sceneRef.current = scene;
 
     // Camera
@@ -120,17 +120,17 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     rendererRef.current = renderer;
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0x4B0082, 0.8); // Dark Indigo ambient light, brighter
+    const ambientLight = new THREE.AmbientLight(0x4B0082, 0.8);
     scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7); // Brighter directional
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
     directionalLight.position.set(50, 50, 25);
     scene.add(directionalLight);
 
-    const pointLight1 = new THREE.PointLight(0xBF00FF, 5, 200, 2); // Electric Purple, brighter
+    const pointLight1 = new THREE.PointLight(0xBF00FF, 5, 200, 2);
     pointLight1.position.set(-50, 20, -40);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0x00BFFF, 5, 200, 2); // Deep Sky Blue, brighter
+    const pointLight2 = new THREE.PointLight(0x00BFFF, 5, 200, 2);
     pointLight2.position.set(60, 25, 30);
     scene.add(pointLight2);
     

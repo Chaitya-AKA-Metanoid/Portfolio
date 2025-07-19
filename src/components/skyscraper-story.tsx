@@ -32,9 +32,9 @@ const skills = {
 const cameraPath = [
     { position: [0, 80, 100], target: [0, 20, 0] },      // 0. Start - Wide overview
     { position: [0, 50, 80], target: [0, 20, 0] },      // 1. Zoom in slightly for "Who Am I?"
-    { position: [20, 40, -30], target: skills.position }, // 2. Pan right towards Skills
-    { position: [50, 25, -35], target: skills.position },   // 3. Zoom in on Skills
-    { position: [-20, 60, 0], target: projects[0].position },  // 4. Pan left towards P1
+    { position: [-20, 40, -30], target: skills.position }, // 2. Pan towards Skills
+    { position: [-50, 25, -35], target: skills.position },   // 3. Zoom in on Skills
+    { position: [20, 60, 0], target: projects[0].position },  // 4. Pan left towards P1
     { position: [-50, 30, -30], target: projects[0].position }, // 5. Zoom in on P1
     { position: [30, 40, 60], target: projects[1].position },    // 6. Arc towards P2
     { position: [10, 20, 45], target: projects[1].position },     // 7. Zoom in on P2
@@ -138,15 +138,13 @@ export default function SkyscraperStory() {
     />
   ), [scrollProgress, activeProjectIndex, journeyFinished]);
 
-  const ContentWrapper = ({ children, alignment = 'center' }: { children: React.ReactNode, alignment?: 'start' | 'end' | 'center' }) => {
-    const alignmentClass = {
-        start: 'items-center lg:items-start',
-        end: 'items-center lg:items-end',
-        center: 'items-center justify-center'
-    }[alignment];
+  const ContentWrapper = ({ children, isVisible }: { children: React.ReactNode; isVisible: boolean }) => {
     return (
-        <section className={`h-screen flex flex-col snap-start container mx-auto px-4 ${alignmentClass}`}>
-            <div className="w-full max-w-lg pt-20 pb-20 flex flex-col justify-center">
+        <section className="h-screen flex flex-col items-center justify-center snap-start container mx-auto px-4">
+            <div className={cn(
+                "w-full max-w-lg transition-all duration-500",
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+            )}>
                 {children}
             </div>
         </section>
@@ -176,62 +174,63 @@ export default function SkyscraperStory() {
              </div>
           </section>
 
-          <ContentWrapper alignment="end">
-              <div className={cn(
-                "transition-all duration-500 [text-shadow:0_2px_10px_rgba(0,0,0,0.8)]",
-                showWhoAmI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-              )}>
-                <h2 className="font-headline text-4xl md:text-5xl font-bold text-accent mb-4">Who Am I?</h2>
-                <div className="text-lg text-muted-foreground space-y-4">
-                    <p>
-                        I'm a CS grad with a builder’s mindset and a storyteller’s curiosity. I thrive on diving deep, whether it's backtesting a trading strategy, decoding business behavior, or bringing a creative project to life.
-                    </p>
-                    <p>
-                        My passion lies at the intersection of technology and creative problem-solving. I'm driven by the need to learn fast, build meaningfully, and understand the "why" behind things. 
-                    </p>
-                    <p>
-                        This portfolio is a glimpse into the things I’ve created, questioned, and grown from.
-                    </p>
-                </div>
-              </div>
+          <ContentWrapper isVisible={showWhoAmI}>
+                <Card className="bg-card/70 backdrop-blur-sm">
+                    <CardHeader>
+                        <CardTitle className="font-headline text-4xl md:text-5xl font-bold text-accent">Who Am I?</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-lg text-muted-foreground space-y-4">
+                        <p>
+                            I'm a CS grad with a builder’s mindset and a storyteller’s curiosity. I thrive on diving deep, whether it's backtesting a trading strategy, decoding business behavior, or bringing a creative project to life.
+                        </p>
+                        <p>
+                            My passion lies at the intersection of technology and creative problem-solving. I'm driven by the need to learn fast, build meaningfully, and understand the "why" behind things.
+                        </p>
+                        <p>
+                            This portfolio is a glimpse into the things I’ve created, questioned, and grown from.
+                        </p>
+                    </CardContent>
+                </Card>
           </ContentWrapper>
           
-          <ContentWrapper alignment="start">
-              <div className={cn(
-                "transition-all duration-500 [text-shadow:0_2px_10px_rgba(0,0,0,0.8)]",
-                showSkills ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-              )}>
-                <h2 className="font-headline text-4xl md:text-5xl font-bold text-accent mb-4">Skills</h2>
-                <div className="space-y-6">
-                    <div>
-                        <h3 className="font-semibold text-2xl text-foreground mb-2">Languages</h3>
-                        <p className="text-lg text-muted-foreground">Python, JavaScript, TypeScript, C++, SQL, HTML/CSS</p>
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-2xl text-foreground mb-2">Frameworks & Libraries</h3>
-                        <p className="text-lg text-muted-foreground">React, Next.js, Node.js, TensorFlow, PyTorch, Pandas, Scikit-learn, Three.js</p>
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-2xl text-foreground mb-2">Databases</h3>
-                        <p className="text-lg text-muted-foreground">MySQL, PostgreSQL, MongoDB, Firebase</p>
-                    </div>
-                </div>
-              </div>
+          <ContentWrapper isVisible={showSkills}>
+              <Card className="bg-card/70 backdrop-blur-sm">
+                  <CardHeader>
+                      <CardTitle className="font-headline text-4xl md:text-5xl font-bold text-accent">Skills</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                      <div className="space-y-6">
+                          <div>
+                              <h3 className="font-semibold text-2xl text-foreground mb-2">Languages</h3>
+                              <p className="text-lg text-muted-foreground">Python, JavaScript, TypeScript, C++, SQL, HTML/CSS</p>
+                          </div>
+                          <div>
+                              <h3 className="font-semibold text-2xl text-foreground mb-2">Frameworks & Libraries</h3>
+                              <p className="text-lg text-muted-foreground">React, Next.js, Node.js, TensorFlow, PyTorch, Pandas, Scikit-learn, Three.js</p>
+                          </div>
+                          <div>
+                              <h3 className="font-semibold text-2xl text-foreground mb-2">Databases</h3>
+                              <p className="text-lg text-muted-foreground">MySQL, PostgreSQL, MongoDB, Firebase</p>
+                          </div>
+                      </div>
+                  </CardContent>
+              </Card>
           </ContentWrapper>
 
 
           {projects.map((project, index) => (
-             <ContentWrapper key={index} alignment={index % 2 === 0 ? "start" : "end"}>
-                  <div className={cn(
-                    "transition-all duration-500 [text-shadow:0_2px_10px_rgba(0,0,0,0.8)]",
-                    activeProjectIndex === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-                  )}>
-                    <h2 className="font-headline text-4xl md:text-5xl font-bold text-accent mb-2">{project.title}</h2>
-                    <p className="text-lg text-muted-foreground mb-6">{project.description}</p>
-                    <div className="flex space-x-4">
-                      <Button variant="ghost" className="text-muted-foreground hover:text-accent hover:bg-accent/10" size="sm" asChild><a href={project.links.github} target="_blank" rel="noopener noreferrer"><Github /> GitHub</a></Button>
-                    </div>
-                  </div>
+             <ContentWrapper key={index} isVisible={activeProjectIndex === index}>
+                  <Card className="bg-card/70 backdrop-blur-sm">
+                      <CardHeader>
+                          <CardTitle className="font-headline text-4xl md:text-5xl font-bold text-accent">{project.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <p className="text-lg text-muted-foreground mb-6">{project.description}</p>
+                          <div className="flex space-x-4">
+                            <Button variant="ghost" className="text-muted-foreground hover:text-accent hover:bg-accent/10" size="sm" asChild><a href={project.links.github} target="_blank" rel="noopener noreferrer"><Github /> GitHub</a></Button>
+                          </div>
+                      </CardContent>
+                  </Card>
              </ContentWrapper>
           ))}
 
