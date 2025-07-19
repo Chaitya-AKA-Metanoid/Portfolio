@@ -90,56 +90,83 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
 
 
     const baseHeight = Math.random() * 60 + 20;
-    const baseWidth = Math.random() * 8 + 8;
-    const baseDepth = Math.random() * 8 + 8;
-    
-    const baseGeom = new THREE.BoxGeometry(baseWidth, baseHeight, baseDepth);
-    const base = new THREE.Mesh(baseGeom, material);
-    base.position.y = baseHeight / 2;
-    addWindows(base);
-    buildingGroup.add(base);
-
     const type = Math.random();
 
-    if (type < 0.3) { // Tapered building
-        const midHeight = Math.random() * 30 + 10;
-        const midWidth = baseWidth * (Math.random() * 0.3 + 0.5);
-        const midDepth = baseDepth * (Math.random() * 0.3 + 0.5);
+    if (type < 0.2) { // Cylindrical building
+        const radius = Math.random() * 4 + 4;
+        const height = Math.random() * 100 + 40;
+        const baseGeom = new THREE.CylinderGeometry(radius, radius, height, 16);
+        const base = new THREE.Mesh(baseGeom, material);
+        base.position.y = height / 2;
+        buildingGroup.add(base);
 
-        const midGeom = new THREE.BoxGeometry(midWidth, midHeight, midDepth);
-        const mid = new THREE.Mesh(midGeom, material);
-        mid.position.y = baseHeight + midHeight / 2;
-        addWindows(mid);
-        buildingGroup.add(mid);
-
-        if (Math.random() < 0.5) { // Potential third tier
-            const topHeight = Math.random() * 20 + 5;
-            const topWidth = midWidth * (Math.random() * 0.2 + 0.6);
-            const topDepth = midDepth * (Math.random() * 0.2 + 0.6);
-            
-            const topGeom = new THREE.BoxGeometry(topWidth, topHeight, topDepth);
-            const top = new THREE.Mesh(topGeom, material);
-            top.position.y = baseHeight + midHeight + topHeight / 2;
-            addWindows(top);
-            buildingGroup.add(top);
+        // Add a glowing ring sometimes
+        if (Math.random() > 0.6) {
+            const ringRadius = radius + 0.5;
+            const ringGeom = new THREE.TorusGeometry(ringRadius, 0.2, 8, 32);
+            const ringMat = new THREE.MeshStandardMaterial({
+                color: Math.random() > 0.5 ? 0xBF00FF : 0xFFD700,
+                emissive: Math.random() > 0.5 ? 0xBF00FF : 0xFFD700,
+                emissiveIntensity: 1.5,
+            });
+            const ring = new THREE.Mesh(ringGeom, ringMat);
+            ring.rotation.x = Math.PI / 2;
+            ring.position.y = Math.random() * (height - 20) + 10;
+            buildingGroup.add(ring);
         }
-
-    } else if (type < 0.5) { // Spire/Antenna
-        const antennaHeight = Math.random() * 40 + 20;
-        const antennaGeom = new THREE.CylinderGeometry(0.5, 1, antennaHeight, 6);
-        const antenna = new THREE.Mesh(antennaGeom, material);
-        antenna.position.y = baseHeight + antennaHeight/2;
-        buildingGroup.add(antenna);
+        return [base];
+    } else { // Rectangular building variations
+        const baseWidth = Math.random() * 8 + 8;
+        const baseDepth = Math.random() * 8 + 8;
         
-        if (Math.random() > 0.5) {
-            const light = new THREE.PointLight(0xff0000, 20, 30);
-            light.position.y = baseHeight + antennaHeight;
-            buildingGroup.add(light);
+        const baseGeom = new THREE.BoxGeometry(baseWidth, baseHeight, baseDepth);
+        const base = new THREE.Mesh(baseGeom, material);
+        base.position.y = baseHeight / 2;
+        addWindows(base);
+        buildingGroup.add(base);
+
+        const buildType = Math.random();
+
+        if (buildType < 0.4) { // Tapered building
+            const midHeight = Math.random() * 30 + 10;
+            const midWidth = baseWidth * (Math.random() * 0.3 + 0.5);
+            const midDepth = baseDepth * (Math.random() * 0.3 + 0.5);
+
+            const midGeom = new THREE.BoxGeometry(midWidth, midHeight, midDepth);
+            const mid = new THREE.Mesh(midGeom, material);
+            mid.position.y = baseHeight + midHeight / 2;
+            addWindows(mid);
+            buildingGroup.add(mid);
+
+            if (Math.random() < 0.5) { // Potential third tier
+                const topHeight = Math.random() * 20 + 5;
+                const topWidth = midWidth * (Math.random() * 0.2 + 0.6);
+                const topDepth = midDepth * (Math.random() * 0.2 + 0.6);
+                
+                const topGeom = new THREE.BoxGeometry(topWidth, topHeight, topDepth);
+                const top = new THREE.Mesh(topGeom, material);
+                top.position.y = baseHeight + midHeight + topHeight / 2;
+                addWindows(top);
+                buildingGroup.add(top);
+            }
+
+        } else if (buildType < 0.7) { // Spire/Antenna
+            const antennaHeight = Math.random() * 40 + 20;
+            const antennaGeom = new THREE.CylinderGeometry(0.5, 1, antennaHeight, 6);
+            const antenna = new THREE.Mesh(antennaGeom, material);
+            antenna.position.y = baseHeight + antennaHeight/2;
+            buildingGroup.add(antenna);
+            
+            if (Math.random() > 0.5) {
+                const light = new THREE.PointLight(0xff0000, 20, 30);
+                light.position.y = baseHeight + antennaHeight;
+                buildingGroup.add(light);
+            }
         }
+        
+        // Original simple block buildings will be the "else" case
+        return [base];
     }
-    
-    // Original simple block buildings will be the "else" case, appearing ~50% of the time
-    return [base];
   }
 };
 
@@ -190,17 +217,17 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
     rendererRef.current = renderer;
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0x4B0082, 1.5);
+    const ambientLight = new THREE.AmbientLight(0x4B0082, 2.0); // Increased intensity
     scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5); // Increased intensity
     directionalLight.position.set(50, 50, 25);
     scene.add(directionalLight);
 
-    const pointLight1 = new THREE.PointLight(0xBF00FF, 30, 400, 2); // More intense purple
+    const pointLight1 = new THREE.PointLight(0xBF00FF, 40, 400, 2); // Increased intensity
     pointLight1.position.set(-50, 20, -40);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0xFFD700, 20, 400, 2); // Brighter yellow
+    const pointLight2 = new THREE.PointLight(0xFFD700, 30, 400, 2); // Increased intensity
     pointLight2.position.set(60, 25, 30);
     scene.add(pointLight2);
     
