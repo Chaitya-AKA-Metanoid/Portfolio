@@ -62,35 +62,84 @@ const createBuilding = (scene: THREE.Group, position: THREE.Vector3, isProjectBu
       roughness: 0.8,
       metalness: 0.2,
     });
-
-    const bodyHeight = Math.random() * 80 + 20; // Taller buildings
-    const bodyWidth = Math.random() * 8 + 6;
-    const bodyDepth = Math.random() * 8 + 6;
-
-    const bodyGeom = new THREE.BoxGeometry(bodyWidth, bodyHeight, bodyDepth);
-    const body = new THREE.Mesh(bodyGeom, material);
-    body.position.y = bodyHeight / 2;
-    buildingGroup.add(body);
-
-    // Windows
-    const windowGeom = new THREE.PlaneGeometry(0.8, 1.2);
-    const windowMat = new THREE.MeshStandardMaterial({
+     const windowMat = new THREE.MeshStandardMaterial({
       color: 0x222233,
       emissive: 0xffff00,
-      emissiveIntensity: Math.random() > 0.1 ? 1 : 0, // More yellow lights
+      emissiveIntensity: 0, 
     });
 
-    for (let y = 5; y < bodyHeight - 5; y += 4) {
-      for (let x = -bodyWidth / 2 + 1; x < bodyWidth / 2 - 1; x += 3) {
-        if (Math.random() > 0.2) { // Add some randomness to window placement
-            const windowMesh = new THREE.Mesh(windowGeom, windowMat);
-            windowMesh.position.set(x, y, bodyDepth / 2 + 0.01);
-            windowMesh.rotation.z = (Math.random() - 0.5) * 0.05;
-            body.add(windowMesh);
+    const addWindows = (buildingMesh: THREE.Mesh) => {
+        const geom = buildingMesh.geometry as THREE.BoxGeometry;
+        const { width, height, depth } = geom.parameters;
+        const windowGeom = new THREE.PlaneGeometry(0.8, 1.2);
+        
+        const emIntensity = Math.random() > 0.1 ? 1 : 0;
+        const mat = windowMat.clone();
+        mat.emissiveIntensity = emIntensity;
+
+        for (let y = 2; y < height - 2; y += 4) {
+            for (let x = -width / 2 + 1; x < width / 2 - 1; x += 3) {
+                 if (Math.random() > 0.25) { 
+                    const windowMesh = new THREE.Mesh(windowGeom, mat);
+                    windowMesh.position.set(x, y - height / 2, depth / 2 + 0.01);
+                    buildingMesh.add(windowMesh);
+                }
+            }
         }
-      }
     }
-    return [body]; // Return array for consistency
+
+
+    const baseHeight = Math.random() * 60 + 20;
+    const baseWidth = Math.random() * 8 + 8;
+    const baseDepth = Math.random() * 8 + 8;
+    
+    const baseGeom = new THREE.BoxGeometry(baseWidth, baseHeight, baseDepth);
+    const base = new THREE.Mesh(baseGeom, material);
+    base.position.y = baseHeight / 2;
+    addWindows(base);
+    buildingGroup.add(base);
+
+    const type = Math.random();
+
+    if (type < 0.3) { // Tapered building
+        const midHeight = Math.random() * 30 + 10;
+        const midWidth = baseWidth * (Math.random() * 0.3 + 0.5);
+        const midDepth = baseDepth * (Math.random() * 0.3 + 0.5);
+
+        const midGeom = new THREE.BoxGeometry(midWidth, midHeight, midDepth);
+        const mid = new THREE.Mesh(midGeom, material);
+        mid.position.y = baseHeight + midHeight / 2;
+        addWindows(mid);
+        buildingGroup.add(mid);
+
+        if (Math.random() < 0.5) { // Potential third tier
+            const topHeight = Math.random() * 20 + 5;
+            const topWidth = midWidth * (Math.random() * 0.2 + 0.6);
+            const topDepth = midDepth * (Math.random() * 0.2 + 0.6);
+            
+            const topGeom = new THREE.BoxGeometry(topWidth, topHeight, topDepth);
+            const top = new THREE.Mesh(topGeom, material);
+            top.position.y = baseHeight + midHeight + topHeight / 2;
+            addWindows(top);
+            buildingGroup.add(top);
+        }
+
+    } else if (type < 0.5) { // Spire/Antenna
+        const antennaHeight = Math.random() * 40 + 20;
+        const antennaGeom = new THREE.CylinderGeometry(0.5, 1, antennaHeight, 6);
+        const antenna = new THREE.Mesh(antennaGeom, material);
+        antenna.position.y = baseHeight + antennaHeight/2;
+        buildingGroup.add(antenna);
+        
+        if (Math.random() > 0.5) {
+            const light = new THREE.PointLight(0xff0000, 20, 30);
+            light.position.y = baseHeight + antennaHeight;
+            buildingGroup.add(light);
+        }
+    }
+    
+    // Original simple block buildings will be the "else" case, appearing ~50% of the time
+    return [base];
   }
 };
 
@@ -288,5 +337,3 @@ export function CityscapeCanvas({ scrollProgress, activeProjectIndex, cameraPath
 
   return <div ref={mountRef} className="fixed top-0 left-0 w-full h-full -z-10" />;
 }
-
-    
